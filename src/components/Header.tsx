@@ -4,9 +4,11 @@ interface Props {
 
 const Header = ({ title }: Props) => {
   return (
-    <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-      {title}
-    </h1>
+    <header>
+      <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+        {title}
+      </h1>
+    </header>
   );
 };
 

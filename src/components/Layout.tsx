@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
-import { Suspense } from 'react';
+import Link from 'next/link';
 
 interface Props {
   title: string;
@@ -18,14 +18,21 @@ const Layout = ({ title, children }: Props) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <Suspense fallback={'Loading...'}>
-            <Header title={title} />
-          </Suspense>
-          {children}
-        </div>
-      </main>
+
+      <div className="flex min-h-screen flex-col items-stretch bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <Header title={title} />
+
+        <main className="flex flex-1 flex-col items-center justify-center">
+          <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+            {children}
+          </div>
+        </main>
+
+        <footer className="p-4 text-right">
+          Made with ❤️ by{' '}
+          <Link href="https://cwf.tayles.co.uk">Clockwork Fish</Link>
+        </footer>
+      </div>
     </>
   );
 };
