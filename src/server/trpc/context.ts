@@ -1,5 +1,5 @@
-import { type inferAsyncReturnType } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type inferAsyncReturnType } from '@trpc/server';
+import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
 
 /**
  * Replace this with an object if you want to pass things to createContextInner
