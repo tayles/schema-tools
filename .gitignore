@@ -17,6 +17,9 @@
 /out/
 next-env.d.ts
 
+# IDEs
+.idea
+
 # production
 /build
 
