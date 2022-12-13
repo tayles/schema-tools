@@ -7,7 +7,7 @@ import ErrorsPanel from '@/components/ErrorsPanel';
 const Home: NextPage = () => {
   return (
     <Layout title="Schema Tools">
-      <div className="flex gap-8 text-black">
+      <div className="mx-4 flex flex-1 gap-4 text-black ">
         <SchemaPanel />
         <DataPanel />
         <ErrorsPanel />
