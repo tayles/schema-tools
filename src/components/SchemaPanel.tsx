@@ -11,6 +11,10 @@ import { SupportedLanguagesArr, type SupportedLanguages } from '@/utils/model';
 import type { ConvertResponse, ConvertRequest } from '@/workers/converter';
 import type { FormatResponse, FormatRequest } from '@/workers/formatter';
 import ButtonGroup from './ButtonGroup';
+import type {
+  GenerateFakeDataRequest,
+  GenerateFakeDataResponse,
+} from '@/workers/faker';
 
 const SchemaPanel = () => {
   const [file, setFile] = useState<File>();
@@ -19,6 +23,7 @@ const SchemaPanel = () => {
 
   const formatWorkerRef = useRef<Worker>();
   const convertWorkerRef = useRef<Worker>();
+  const generateDataWorkerRef = useRef<Worker>();
 
   useEffect(() => {
     if (file) {
@@ -75,6 +80,21 @@ const SchemaPanel = () => {
     };
   }, []);
 
+  // generate data from json schema
+  useEffect(() => {
+    generateDataWorkerRef.current = new Worker(
+      new URL('../workers/faker.ts', import.meta.url),
+    );
+    generateDataWorkerRef.current.onmessage = (
+      event: MessageEvent<GenerateFakeDataResponse>,
+    ) => {
+      console.log(event.data.data);
+    };
+    return () => {
+      generateDataWorkerRef.current?.terminate();
+    };
+  }, []);
+
   const handleFormat = () => {
     const req: FormatRequest = {
       filename: file?.name ?? '',
@@ -82,6 +102,13 @@ const SchemaPanel = () => {
       value,
     };
     formatWorkerRef.current?.postMessage(req);
+  };
+
+  const handleGenerateData = () => {
+    const req: GenerateFakeDataRequest = {
+      schema: value,
+    };
+    generateDataWorkerRef.current?.postMessage(req);
   };
 
   const handleConvert = () => {
@@ -93,7 +120,7 @@ const SchemaPanel = () => {
     convertWorkerRef.current?.postMessage(req);
   };
 
-  const handleLanguageChange = (language: SupportedLanguages) => {
+  const handleLanguageChange = () => {
     handleConvert();
   };
 
@@ -103,9 +130,10 @@ const SchemaPanel = () => {
         <div className="flex gap-2">
           <ButtonGroup
             onClick={handleLanguageChange}
-            buttons={SupportedLanguagesArr}
+            buttons={Array.from(SupportedLanguagesArr)}
           />
           <Button onClick={handleFormat}>Format</Button>
+          <Button onClick={handleGenerateData}>Generate Data</Button>
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
