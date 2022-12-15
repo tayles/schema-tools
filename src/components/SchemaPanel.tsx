@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
+import { getFileContents, getFileExtension } from '@/utils/file';
 
 const SchemaPanel = () => {
   const [file, setFile] = useState<File>();
@@ -11,7 +12,7 @@ const SchemaPanel = () => {
 
   useEffect(() => {
     if (file) {
-      const extension = file.name.split('.').pop();
+      const extension = getFileExtension(file);
       switch (extension) {
         case 'yaml':
         case 'yml':
@@ -24,15 +25,9 @@ const SchemaPanel = () => {
           throw new Error('Unsupported file format');
       }
 
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        if (typeof e.target?.result === 'string') {
-          setValue(e.target.result);
-        } else {
-          throw new Error('Cannot read file contents');
-        }
-      };
-      reader.readAsText(file);
+      getFileContents(file)
+        .then((contents) => setValue(contents))
+        .catch(console.error);
     }
   }, [file]);
 
