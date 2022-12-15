@@ -6,10 +6,13 @@ import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
 import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
+import { useCopyToClipboard } from 'usehooks-ts';
+import Button from './Button';
 
 const DataPanel = () => {
   const rawData = useSchemaStore((state) => state.rawData);
   const setRawData = useSchemaStore((state) => state.setRawData);
+  const [, copy] = useCopyToClipboard();
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
@@ -37,9 +40,18 @@ const DataPanel = () => {
 
   return (
     <Panel title="Data">
-      <FileUploadInput onFileLoad={setFile} />
-      <div className="flex-1">
-        <CodeEditor language={language} code={rawData} />
+      <div className="flex flex-1 flex-col gap-2">
+        <div className="flex gap-2">
+          <Button onClick={() => copy(rawData)}>Copy</Button>
+        </div>
+        <FileUploadInput onFileLoad={setFile} />
+        <div className="flex-1">
+          <CodeEditor
+            language={language}
+            code={rawData}
+            onChange={setRawData}
+          />
+        </div>
       </div>
     </Panel>
   );

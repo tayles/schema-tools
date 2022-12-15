@@ -63,8 +63,8 @@ const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
 };
 
 interface Props {
-  language?: SupportedLanguages;
-  code?: string | null;
+  language: SupportedLanguages;
+  code: string;
   options?: monaco.editor.IStandaloneEditorConstructionOptions;
   theme?: string;
   onChange?: (value: string) => void;

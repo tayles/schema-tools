@@ -13,8 +13,8 @@ interface SchemaState {
   schema: JSONValue | null;
   data: JSONValue | null;
   schemaVersion: string | null;
-  rawSchema: string | null;
-  rawData: string | null;
+  rawSchema: string;
+  rawData: string;
   schemaValid: boolean;
   schemaFormatted: boolean;
   dataValid: boolean;

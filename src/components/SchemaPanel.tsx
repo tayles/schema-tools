@@ -14,11 +14,13 @@ import type {
   GenerateFakeDataResponse,
 } from '@/workers/faker';
 import { useSchemaStore } from '@/store/state';
+import { useCopyToClipboard } from 'usehooks-ts';
 
 const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
   const setRawData = useSchemaStore((state) => state.setRawData);
+  const [, copy] = useCopyToClipboard();
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
@@ -136,6 +138,7 @@ const SchemaPanel = () => {
           />
           <Button onClick={handleFormat}>Format</Button>
           <Button onClick={handleGenerateData}>Generate Data</Button>
+          <Button onClick={() => copy(rawSchema)}>Copy</Button>
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
