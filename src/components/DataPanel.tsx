@@ -6,12 +6,12 @@ import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
 import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
-import { useCopyToClipboard } from 'usehooks-ts';
 import Button from './Button';
 import { deriveSchemaFromData } from '@/utils/derive-json-schema';
 import { jsonToString, stringToJson } from '@/utils/json';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
+import CopyButton from './CopyButton';
 
 const DataPanel = () => {
   const setSchema = useSchemaStore((state) => state.setSchema);
@@ -23,7 +23,6 @@ const DataPanel = () => {
   const setData = useSchemaStore((state) => state.setData);
   const setRawData = useSchemaStore((state) => state.setRawData);
   const isDataValid = useSchemaStore((state) => state.dataValid);
-  const [, copy] = useCopyToClipboard();
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
@@ -78,8 +77,8 @@ const DataPanel = () => {
     <Panel title="Data">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
-          <Button onClick={() => copy(rawData)}>Copy</Button>
           <Button onClick={handleDeriveSchema}>Derive Schema</Button>
+          <CopyButton text={rawData} />
           <ErrorCountBadge count={dataErrors?.length} />
           <ValidLabel valid={isDataValid} />
         </div>
