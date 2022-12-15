@@ -1,5 +1,5 @@
 import CodeEditor, { type SupportedLanguages } from './CodeEditor';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
@@ -31,8 +31,26 @@ const SchemaPanel = () => {
     }
   }, [file]);
 
+  const workerRef = useRef<Worker>();
+
+  useEffect(() => {
+    workerRef.current = new Worker(
+      new URL('../workers/formatter.ts', import.meta.url),
+    );
+    workerRef.current.onmessage = (event: MessageEvent<string>) =>
+      setValue(event.data);
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, []);
+
+  const handleWork = () => {
+    workerRef.current?.postMessage(value);
+  };
+
   return (
     <Panel title="Schema">
+      <button onClick={handleWork}>Format</button>
       <FileUploadInput onFileLoad={setFile} />
       <div className="flex-1">
         <CodeEditor language={language} code={value} />
