@@ -1,7 +1,7 @@
 import { dump, load } from 'js-yaml';
 
 import { getOtherLanguage, type SupportedLanguages } from '@/utils/model';
-import { jsonToString } from '@/utils/json';
+import { jsonToString, stringToJson } from '@/utils/json';
 
 export interface ConvertRequest {
   language: SupportedLanguages;
@@ -15,7 +15,7 @@ export interface ConvertResponse {
 }
 
 function jsonToYaml(str: string): string {
-  return dump(JSON.parse(str), {
+  return dump(stringToJson(str), {
     // filename: 'x.json',
   });
 }
