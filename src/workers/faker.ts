@@ -12,7 +12,7 @@ export interface GenerateFakeDataResponse {
 
 function generateFakeData(str: string): string {
   const schema = stringToJson(str);
-  return jsonToString(JSONSchemaFaker.generate(schema));
+  return jsonToString(JSONSchemaFaker.generate(schema as any));
 }
 
 /**

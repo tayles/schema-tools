@@ -64,7 +64,7 @@ const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
 
 interface Props {
   language?: SupportedLanguages;
-  code?: string;
+  code?: string | null;
   options?: monaco.editor.IStandaloneEditorConstructionOptions;
   theme?: string;
   onChange?: (value: string) => void;
@@ -94,7 +94,7 @@ const CodeEditor = ({
       height="100%"
       options={combinedOptions}
       language={language}
-      value={code}
+      value={code ?? undefined}
       theme={theme}
       onChange={handleEditorChange}
     />

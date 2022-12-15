@@ -5,10 +5,13 @@ import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
 import { type SupportedLanguages } from '@/utils/model';
+import { useSchemaStore } from '@/store/state';
 
 const DataPanel = () => {
+  const rawData = useSchemaStore((state) => state.rawData);
+  const setRawData = useSchemaStore((state) => state.setRawData);
+
   const [file, setFile] = useState<File>();
-  const [value, setValue] = useState('');
   const [language, setLanguage] = useState<SupportedLanguages>('json');
 
   useEffect(() => {
@@ -27,16 +30,16 @@ const DataPanel = () => {
       }
 
       getFileContents(file)
-        .then((contents) => setValue(contents))
+        .then((contents) => setRawData(contents))
         .catch(console.error);
     }
-  }, [file]);
+  }, [file, setRawData]);
 
   return (
     <Panel title="Data">
       <FileUploadInput onFileLoad={setFile} />
       <div className="flex-1">
-        <CodeEditor language={language} code={value} />
+        <CodeEditor language={language} code={rawData} />
       </div>
     </Panel>
   );

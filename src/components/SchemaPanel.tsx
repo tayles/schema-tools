@@ -1,5 +1,3 @@
-import * as exampleJson from '../../public/examples/schema.json';
-
 import { getFileContents, getFileExtension } from '@/utils/file';
 import { useEffect, useRef, useState } from 'react';
 
@@ -15,10 +13,14 @@ import type {
   GenerateFakeDataRequest,
   GenerateFakeDataResponse,
 } from '@/workers/faker';
+import { useSchemaStore } from '@/store/state';
 
 const SchemaPanel = () => {
+  const rawSchema = useSchemaStore((state) => state.rawSchema);
+  const setRawSchema = useSchemaStore((state) => state.setRawSchema);
+  const setRawData = useSchemaStore((state) => state.setRawData);
+
   const [file, setFile] = useState<File>();
-  const [value, setValue] = useState(JSON.stringify(exampleJson, undefined, 2));
   const [language, setLanguage] = useState<SupportedLanguages>('json');
 
   const formatWorkerRef = useRef<Worker>();
@@ -41,10 +43,10 @@ const SchemaPanel = () => {
       }
 
       getFileContents(file)
-        .then((contents) => setValue(contents))
+        .then((contents) => setRawSchema(contents))
         .catch(console.error);
     }
-  }, [file]);
+  }, [file, setRawSchema]);
 
   // prettier formatting
   useEffect(() => {
@@ -54,14 +56,14 @@ const SchemaPanel = () => {
     formatWorkerRef.current.onmessage = (
       event: MessageEvent<FormatResponse>,
     ) => {
-      setValue('');
+      setRawSchema('');
       setLanguage(event.data.language);
-      setValue(event.data.value);
+      setRawSchema(event.data.value);
     };
     return () => {
       formatWorkerRef.current?.terminate();
     };
-  }, []);
+  }, [setRawSchema]);
 
   // convert JSON <> YAML
   useEffect(() => {
@@ -71,14 +73,14 @@ const SchemaPanel = () => {
     convertWorkerRef.current.onmessage = (
       event: MessageEvent<ConvertResponse>,
     ) => {
-      setValue('');
+      setRawSchema('');
       setLanguage(event.data.language);
-      setValue(event.data.value);
+      setRawSchema(event.data.value);
     };
     return () => {
       convertWorkerRef.current?.terminate();
     };
-  }, []);
+  }, [setRawSchema]);
 
   // generate data from json schema
   useEffect(() => {
@@ -88,25 +90,25 @@ const SchemaPanel = () => {
     generateDataWorkerRef.current.onmessage = (
       event: MessageEvent<GenerateFakeDataResponse>,
     ) => {
-      console.log(event.data.data);
+      setRawData(event.data.data);
     };
     return () => {
       generateDataWorkerRef.current?.terminate();
     };
-  }, []);
+  }, [setRawData]);
 
   const handleFormat = () => {
     const req: FormatRequest = {
       filename: file?.name ?? '',
       language,
-      value,
+      value: rawSchema ?? '',
     };
     formatWorkerRef.current?.postMessage(req);
   };
 
   const handleGenerateData = () => {
     const req: GenerateFakeDataRequest = {
-      schema: value,
+      schema: rawSchema ?? '',
     };
     generateDataWorkerRef.current?.postMessage(req);
   };
@@ -115,7 +117,7 @@ const SchemaPanel = () => {
     const req: ConvertRequest = {
       filename: file?.name ?? '',
       language,
-      value,
+      value: rawSchema ?? '',
     };
     convertWorkerRef.current?.postMessage(req);
   };
@@ -137,7 +139,11 @@ const SchemaPanel = () => {
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
-          <CodeEditor language={language} code={value} onChange={setValue} />
+          <CodeEditor
+            language={language}
+            code={rawSchema}
+            onChange={setRawSchema}
+          />
         </div>
       </div>
     </Panel>
