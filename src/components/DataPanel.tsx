@@ -8,9 +8,17 @@ import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import { useCopyToClipboard } from 'usehooks-ts';
 import Button from './Button';
+import { deriveSchemaFromData } from '@/utils/derive-json-schema';
+import { jsonToString, stringToJson } from '@/utils/json';
 
 const DataPanel = () => {
+  const setSchema = useSchemaStore((state) => state.setSchema);
+  const setRawSchema = useSchemaStore((state) => state.setRawSchema);
+  const data = useSchemaStore((state) => state.data);
   const rawData = useSchemaStore((state) => state.rawData);
+  const setDataErrors = useSchemaStore((state) => state.setDataErrors);
+  const dataErrors = useSchemaStore((state) => state.dataErrors);
+  const setData = useSchemaStore((state) => state.setData);
   const setRawData = useSchemaStore((state) => state.setRawData);
   const [, copy] = useCopyToClipboard();
 
@@ -38,11 +46,42 @@ const DataPanel = () => {
     }
   }, [file, setRawData]);
 
+  useEffect(() => {
+    try {
+      const data = stringToJson(rawData);
+      setData(data);
+    } catch (err) {
+      console.log('Invalid json', err);
+      setDataErrors([
+        {
+          message: (err as Error).message,
+        },
+      ]);
+    }
+  }, [rawData, setData, setDataErrors]);
+
+  const handleDeriveSchema = () => {
+    if (!data) {
+      return;
+    }
+    console.time('derive-schema');
+    const schema = deriveSchemaFromData(data);
+    console.timeEnd('derive-schema');
+    setSchema(schema);
+    setRawSchema(jsonToString(schema));
+  };
+
   return (
     <Panel title="Data">
       <div className="flex flex-1 flex-col gap-2">
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <Button onClick={() => copy(rawData)}>Copy</Button>
+          <Button onClick={handleDeriveSchema}>Derive Schema</Button>
+          {dataErrors?.length && (
+            <span className="inline-block whitespace-nowrap rounded bg-red-600 py-1 px-2.5 text-center align-baseline text-xs font-bold leading-none text-white">
+              {dataErrors.length}
+            </span>
+          )}
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">

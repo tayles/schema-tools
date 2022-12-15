@@ -1,6 +1,10 @@
+import type { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
+
 import parseJson from 'json-parse-even-better-errors';
 
-type JSONValue =
+export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7;
+
+export type JSONValue =
   | string
   | number
   | boolean

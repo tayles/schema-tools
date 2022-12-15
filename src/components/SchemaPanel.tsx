@@ -15,11 +15,15 @@ import type {
 } from '@/workers/faker';
 import { useSchemaStore } from '@/store/state';
 import { useCopyToClipboard } from 'usehooks-ts';
+import { type JSONSchema, stringToJson } from '@/utils/json';
 
 const SchemaPanel = () => {
+  const setSchema = useSchemaStore((state) => state.setSchema);
   const rawSchema = useSchemaStore((state) => state.rawSchema);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
   const setRawData = useSchemaStore((state) => state.setRawData);
+  const setSchemaErrors = useSchemaStore((state) => state.setSchemaErrors);
+  const schemaErrors = useSchemaStore((state) => state.schemaErrors);
   const [, copy] = useCopyToClipboard();
 
   const [file, setFile] = useState<File>();
@@ -28,6 +32,20 @@ const SchemaPanel = () => {
   const formatWorkerRef = useRef<Worker>();
   const convertWorkerRef = useRef<Worker>();
   const generateDataWorkerRef = useRef<Worker>();
+
+  useEffect(() => {
+    try {
+      const schema = stringToJson(rawSchema);
+      setSchema(schema as JSONSchema);
+    } catch (err) {
+      console.log('Invalid json', err);
+      setSchemaErrors([
+        {
+          message: (err as Error).message,
+        },
+      ]);
+    }
+  }, [rawSchema, setSchema, setSchemaErrors]);
 
   useEffect(() => {
     if (file) {
@@ -131,7 +149,7 @@ const SchemaPanel = () => {
   return (
     <Panel title="Schema">
       <div className="flex flex-1 flex-col gap-2">
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <ButtonGroup
             onClick={handleLanguageChange}
             buttons={Array.from(SupportedLanguagesArr)}
@@ -139,6 +157,11 @@ const SchemaPanel = () => {
           <Button onClick={handleFormat}>Format</Button>
           <Button onClick={handleGenerateData}>Generate Data</Button>
           <Button onClick={() => copy(rawSchema)}>Copy</Button>
+          {schemaErrors?.length && (
+            <span className="inline-block whitespace-nowrap rounded bg-red-600 py-1 px-2.5 text-center align-baseline text-xs font-bold leading-none text-white">
+              {schemaErrors.length}
+            </span>
+          )}
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
