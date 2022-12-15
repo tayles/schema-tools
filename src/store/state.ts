@@ -5,7 +5,7 @@ import { type JSONSchema, type JSONValue, jsonToString } from '@/utils/json';
 
 import create from 'zustand';
 
-interface Error {
+interface ErrorObject {
   message: string;
 }
 
@@ -19,15 +19,15 @@ interface SchemaState {
   schemaFormatted: boolean;
   dataValid: boolean;
   dataFormatted: boolean;
-  schemaErrors: Error[];
-  dataErrors: Error[];
+  schemaErrors: ErrorObject[];
+  dataErrors: ErrorObject[];
 
   setSchema: (schema: JSONSchema) => void;
   setData: (data: JSONValue) => void;
   setRawSchema: (rawSchema: string) => void;
   setRawData: (rawData: string) => void;
-  setSchemaErrors: (errors: Error[]) => void;
-  setDataErrors: (errors: Error[]) => void;
+  setSchemaErrors: (errors: ErrorObject[]) => void;
+  setDataErrors: (errors: ErrorObject[]) => void;
 }
 
 export const useSchemaStore = create<SchemaState>((set) => ({
@@ -48,8 +48,8 @@ export const useSchemaStore = create<SchemaState>((set) => ({
     set(() => ({ data, dataErrors: [], dataValid: true })),
   setRawSchema: (rawSchema: string) => set(() => ({ schema: null, rawSchema })),
   setRawData: (rawData: string) => set(() => ({ data: null, rawData })),
-  setSchemaErrors: (schemaErrors: Error[]) =>
+  setSchemaErrors: (schemaErrors: ErrorObject[]) =>
     set(() => ({ schemaErrors, schema: null, schemaValid: false })),
-  setDataErrors: (dataErrors: Error[]) =>
+  setDataErrors: (dataErrors: ErrorObject[]) =>
     set(() => ({ dataErrors, data: null, dataValid: false })),
 }));
