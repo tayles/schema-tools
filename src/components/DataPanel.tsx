@@ -20,6 +20,7 @@ const DataPanel = () => {
   const dataErrors = useSchemaStore((state) => state.dataErrors);
   const setData = useSchemaStore((state) => state.setData);
   const setRawData = useSchemaStore((state) => state.setRawData);
+  const isDataValid = useSchemaStore((state) => state.dataValid);
   const [, copy] = useCopyToClipboard();
 
   const [file, setFile] = useState<File>();
@@ -82,6 +83,7 @@ const DataPanel = () => {
               {dataErrors.length}
             </span>
           )}
+          <span>{isDataValid ? '✅' : '❌'}</span>
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">

@@ -42,12 +42,14 @@ export const useSchemaStore = create<SchemaState>((set) => ({
   dataFormatted: true,
   schemaErrors: [],
   dataErrors: [],
-  setSchema: (schema: JSONSchema) => set(() => ({ schema, schemaErrors: [] })),
-  setData: (data: JSONValue) => set(() => ({ data, dataErrors: [] })),
+  setSchema: (schema: JSONSchema) =>
+    set(() => ({ schema, schemaErrors: [], schemaValid: true })),
+  setData: (data: JSONValue) =>
+    set(() => ({ data, dataErrors: [], dataValid: true })),
   setRawSchema: (rawSchema: string) => set(() => ({ schema: null, rawSchema })),
   setRawData: (rawData: string) => set(() => ({ data: null, rawData })),
   setSchemaErrors: (schemaErrors: Error[]) =>
-    set(() => ({ schemaErrors, schema: null })),
+    set(() => ({ schemaErrors, schema: null, schemaValid: false })),
   setDataErrors: (dataErrors: Error[]) =>
-    set(() => ({ dataErrors, data: null })),
+    set(() => ({ dataErrors, data: null, dataValid: false })),
 }));

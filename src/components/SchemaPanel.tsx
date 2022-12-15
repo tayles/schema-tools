@@ -22,6 +22,7 @@ const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
   const setRawData = useSchemaStore((state) => state.setRawData);
+  const isSchemaValid = useSchemaStore((state) => state.schemaValid);
   const setSchemaErrors = useSchemaStore((state) => state.setSchemaErrors);
   const schemaErrors = useSchemaStore((state) => state.schemaErrors);
   const [, copy] = useCopyToClipboard();
@@ -155,13 +156,14 @@ const SchemaPanel = () => {
             buttons={Array.from(SupportedLanguagesArr)}
           />
           <Button onClick={handleFormat}>Format</Button>
-          <Button onClick={handleGenerateData}>Generate Data</Button>
+          <Button onClick={handleGenerateData}>Gen Data</Button>
           <Button onClick={() => copy(rawSchema)}>Copy</Button>
           {schemaErrors?.length && (
             <span className="inline-block whitespace-nowrap rounded bg-red-600 py-1 px-2.5 text-center align-baseline text-xs font-bold leading-none text-white">
               {schemaErrors.length}
             </span>
           )}
+          <span>{isSchemaValid ? '✅' : '❌'}</span>
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
