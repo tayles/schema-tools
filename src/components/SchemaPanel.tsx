@@ -53,7 +53,7 @@ const SchemaPanel = () => {
       <button onClick={handleWork}>Format</button>
       <FileUploadInput onFileLoad={setFile} />
       <div className="flex-1">
-        <CodeEditor language={language} code={value} />
+        <CodeEditor language={language} code={value} onChange={setValue} />
       </div>
     </Panel>
   );

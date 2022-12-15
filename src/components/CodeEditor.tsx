@@ -68,6 +68,7 @@ interface Props {
   code?: string;
   options?: monaco.editor.IStandaloneEditorConstructionOptions;
   theme?: string;
+  onChange?: (value: string) => void;
 }
 
 const CodeEditor = ({
@@ -75,11 +76,18 @@ const CodeEditor = ({
   code = '',
   options,
   theme = 'vs-light',
+  onChange,
 }: Props) => {
   const combinedOptions = {
     ...defaultOptions,
     options,
   };
+
+  function handleEditorChange(value: string | undefined) {
+    if (onChange) {
+      onChange(value ?? '');
+    }
+  }
 
   return (
     <Editor
@@ -89,6 +97,7 @@ const CodeEditor = ({
       language={language}
       value={code}
       theme={theme}
+      onChange={handleEditorChange}
     />
   );
 };
