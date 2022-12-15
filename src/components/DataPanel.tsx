@@ -1,9 +1,10 @@
-import CodeEditor, { type SupportedLanguages } from './CodeEditor';
+import { getFileContents, getFileExtension } from '@/utils/file';
 import { useEffect, useState } from 'react';
 
+import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
-import { getFileContents, getFileExtension } from '@/utils/file';
+import { type SupportedLanguages } from '@/utils/model';
 
 const DataPanel = () => {
   const [file, setFile] = useState<File>();

@@ -1,8 +1,7 @@
 import type * as monaco from 'monaco-editor';
 
 import Editor from '@monaco-editor/react';
-
-export type SupportedLanguages = 'json' | 'yaml';
+import { type SupportedLanguages } from '@/utils/model';
 
 const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
   acceptSuggestionOnCommitCharacter: true,

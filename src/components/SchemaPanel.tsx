@@ -1,14 +1,28 @@
-import CodeEditor, { type SupportedLanguages } from './CodeEditor';
+import * as exampleJson from '../../public/examples/schema.json';
+
+import { getFileContents, getFileExtension } from '@/utils/file';
 import { useEffect, useRef, useState } from 'react';
 
+import Button from './Button';
+import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
-import { getFileContents, getFileExtension } from '@/utils/file';
+import {
+  getOtherLanguage,
+  SupportedLanguagesArr,
+  type SupportedLanguages,
+} from '@/utils/model';
+import type { ConvertResponse, ConvertRequest } from '@/workers/converter';
+import type { FormatResponse, FormatRequest } from '@/workers/formatter';
+import ButtonGroup from './ButtonGroup';
 
 const SchemaPanel = () => {
   const [file, setFile] = useState<File>();
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(JSON.stringify(exampleJson, undefined, 2));
   const [language, setLanguage] = useState<SupportedLanguages>('json');
+
+  const formatWorkerRef = useRef<Worker>();
+  const convertWorkerRef = useRef<Worker>();
 
   useEffect(() => {
     if (file) {
@@ -31,29 +45,76 @@ const SchemaPanel = () => {
     }
   }, [file]);
 
-  const workerRef = useRef<Worker>();
-
+  // prettier formatting
   useEffect(() => {
-    workerRef.current = new Worker(
+    formatWorkerRef.current = new Worker(
       new URL('../workers/formatter.ts', import.meta.url),
     );
-    workerRef.current.onmessage = (event: MessageEvent<string>) =>
-      setValue(event.data);
+    formatWorkerRef.current.onmessage = (
+      event: MessageEvent<FormatResponse>,
+    ) => {
+      setValue('');
+      setLanguage(event.data.language);
+      setValue(event.data.value);
+    };
     return () => {
-      workerRef.current?.terminate();
+      formatWorkerRef.current?.terminate();
     };
   }, []);
 
-  const handleWork = () => {
-    workerRef.current?.postMessage(value);
+  // convert JSON <> YAML
+  useEffect(() => {
+    convertWorkerRef.current = new Worker(
+      new URL('../workers/converter.ts', import.meta.url),
+    );
+    convertWorkerRef.current.onmessage = (
+      event: MessageEvent<ConvertResponse>,
+    ) => {
+      setValue('');
+      setLanguage(event.data.language);
+      setValue(event.data.value);
+    };
+    return () => {
+      convertWorkerRef.current?.terminate();
+    };
+  }, []);
+
+  const handleFormat = () => {
+    const req: FormatRequest = {
+      filename: file?.name ?? '',
+      language,
+      value,
+    };
+    formatWorkerRef.current?.postMessage(req);
+  };
+
+  const handleConvert = () => {
+    const req: ConvertRequest = {
+      filename: file?.name ?? '',
+      language,
+      value,
+    };
+    convertWorkerRef.current?.postMessage(req);
+  };
+
+  const handleLanguageChange = (language: SupportedLanguages) => {
+    handleConvert();
   };
 
   return (
     <Panel title="Schema">
-      <button onClick={handleWork}>Format</button>
-      <FileUploadInput onFileLoad={setFile} />
-      <div className="flex-1">
-        <CodeEditor language={language} code={value} onChange={setValue} />
+      <div className="flex flex-1 flex-col gap-2">
+        <div className="flex gap-2">
+          <ButtonGroup
+            onClick={handleLanguageChange}
+            buttons={SupportedLanguagesArr}
+          />
+          <Button onClick={handleFormat}>Format</Button>
+        </div>
+        <FileUploadInput onFileLoad={setFile} />
+        <div className="flex-1">
+          <CodeEditor language={language} code={value} onChange={setValue} />
+        </div>
       </div>
     </Panel>
   );
