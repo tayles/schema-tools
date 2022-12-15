@@ -1,33 +1,39 @@
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
+
+import { useState } from 'react';
+
 interface Props {
   onClick: (button: string) => void;
   buttons: string[];
 }
 
 const ButtonGroup = ({ onClick, buttons }: Props) => {
+  const [value, setValue] = useState<string>();
+
   return (
-    <div className="flex justify-center">
+    <ToggleGroup.Root
+      type="single"
+      defaultValue={value}
+      aria-label="Text alignment"
+      value={value}
+      onValueChange={(value) => {
+        if (value) {
+          setValue(value);
+          onClick(value);
+        }
+      }}
+    >
       {buttons.map((label) => (
-        <div
+        <ToggleGroup.Item
           key={label}
-          className="form-check form-check-inline"
-          onClick={() => onClick(label)}
+          className="border-y border-gray-200 bg-white px-2.5 py-2 first:rounded-l-md first:border-x last:rounded-r-md last:border-x focus:relative focus:outline-none focus-visible:z-20 focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          value={label}
+          aria-label={label}
         >
-          <input
-            className="form-check-input form-check-input float-left mt-1 mr-2 h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-300 bg-white bg-contain bg-center bg-no-repeat align-top transition duration-200 checked:border-blue-600 checked:bg-blue-600 focus:outline-none"
-            type="radio"
-            name="inlineRadioOptions"
-            id={label}
-            value={label}
-          />
-          <label
-            className="form-check-label inline-block cursor-pointer text-gray-800"
-            htmlFor={label}
-          >
-            {label}
-          </label>
-        </div>
+          {label}
+        </ToggleGroup.Item>
       ))}
-    </div>
+    </ToggleGroup.Root>
   );
 };
 

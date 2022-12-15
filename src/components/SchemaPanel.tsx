@@ -7,11 +7,7 @@ import Button from './Button';
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
-import {
-  getOtherLanguage,
-  SupportedLanguagesArr,
-  type SupportedLanguages,
-} from '@/utils/model';
+import { SupportedLanguagesArr, type SupportedLanguages } from '@/utils/model';
 import type { ConvertResponse, ConvertRequest } from '@/workers/converter';
 import type { FormatResponse, FormatRequest } from '@/workers/formatter';
 import ButtonGroup from './ButtonGroup';
