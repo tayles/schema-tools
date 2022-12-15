@@ -10,6 +10,8 @@ import { useCopyToClipboard } from 'usehooks-ts';
 import Button from './Button';
 import { deriveSchemaFromData } from '@/utils/derive-json-schema';
 import { jsonToString, stringToJson } from '@/utils/json';
+import ValidLabel from './ValidLabel';
+import ErrorCountBadge from './ErrorCountBadge';
 
 const DataPanel = () => {
   const setSchema = useSchemaStore((state) => state.setSchema);
@@ -78,12 +80,8 @@ const DataPanel = () => {
         <div className="flex items-center gap-2">
           <Button onClick={() => copy(rawData)}>Copy</Button>
           <Button onClick={handleDeriveSchema}>Derive Schema</Button>
-          {dataErrors?.length && (
-            <span className="inline-block whitespace-nowrap rounded bg-red-600 py-1 px-2.5 text-center align-baseline text-xs font-bold leading-none text-white">
-              {dataErrors.length}
-            </span>
-          )}
-          <span>{isDataValid ? '✅' : '❌'}</span>
+          <ErrorCountBadge count={dataErrors?.length} />
+          <ValidLabel valid={isDataValid} />
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
