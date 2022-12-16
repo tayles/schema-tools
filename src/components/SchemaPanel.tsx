@@ -5,11 +5,7 @@ import Button from './Button';
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
-import {
-  getOtherLanguage,
-  SupportedLanguagesArr,
-  type SupportedLanguages,
-} from '@/utils/model';
+import { SupportedLanguagesArr, type SupportedLanguages } from '@/utils/model';
 import ButtonGroup from './ButtonGroup';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
@@ -26,13 +22,7 @@ const SchemaPanel = () => {
   const setRawData = useSchemaStore((state) => state.setRawData);
   const schemaErrors = useSchemaStore((state) => state.schemaErrors);
   const setWorkerRef = useSchemaStore((state) => state.setWorkerRef);
-  const gotParseResult = useSchemaStore((state) => state.gotParseResult);
-  const gotValidationResult = useSchemaStore(
-    (state) => state.gotValidationResult,
-  );
-  const gotFormattingResult = useSchemaStore(
-    (state) => state.gotFormattingResult,
-  );
+  const gotWorkerMessage = useSchemaStore((state) => state.gotWorkerMessage);
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
@@ -69,43 +59,12 @@ const SchemaPanel = () => {
     workerRef.current.onmessage = (event: MessageEvent<WorkerResult>) => {
       const result = event.data;
       console.log(':: UI Thread IN', result);
-      switch (result.command) {
-        case 'parse-result':
-          gotParseResult(result);
-          break;
-        case 'validation-result':
-          gotValidationResult(result);
-          break;
-        case 'formatting-result':
-          gotFormattingResult(result);
-          break;
-        case 'format-payload':
-          result.thing === 'schema'
-            ? setRawSchema(result.formatted ?? '')
-            : setRawData(result.formatted ?? '');
-          break;
-        case 'convert-result':
-          setRawSchema(result.converted ?? '');
-          break;
-        case 'derive-schema-result':
-          setRawSchema(result.schema ?? '');
-          break;
-        case 'derive-data-result':
-          setRawData(result.data ?? '');
-          break;
-      }
+      gotWorkerMessage(result);
     };
     return () => {
       workerRef.current?.terminate();
     };
-  }, [
-    workerRef,
-    setRawSchema,
-    setRawData,
-    gotParseResult,
-    gotValidationResult,
-    gotFormattingResult,
-  ]);
+  }, [workerRef, setRawSchema, setRawData, gotWorkerMessage]);
 
   useEffect(() => {
     sendMessageToWorker({
@@ -124,11 +83,12 @@ const SchemaPanel = () => {
     });
   };
 
-  const handleConvert = () => {
+  const handleConvert = (language: SupportedLanguages) => {
+    setLanguage(language);
     sendMessageToWorker({
       command: 'convert',
       thing: 'schema',
-      language: getOtherLanguage(language),
+      language,
     });
   };
 
@@ -147,7 +107,9 @@ const SchemaPanel = () => {
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
           <ButtonGroup
-            onClick={handleConvert}
+            onClick={(language: string) =>
+              handleConvert(language as SupportedLanguages)
+            }
             buttons={Array.from(SupportedLanguagesArr)}
           />
           <Button onClick={handleFormat} disabled={isFormatted}>

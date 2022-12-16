@@ -1,10 +1,5 @@
-import type {
-  FormattingResult,
-  ParseResult,
-  ValidationResult,
-} from '@/workers/worker-thread';
-
 import type { MutableRefObject } from 'react';
+import type { WorkerResult } from '@/workers/worker-thread';
 import create from 'zustand';
 import exampleDataJson from '../../public/examples/data.json';
 import exampleSchemaJson from '../../public/examples/schema.json';
@@ -42,9 +37,7 @@ interface SchemaState {
 
   setWorkerRef: (workerRef: MutableRefObject<Worker | undefined>) => void;
 
-  gotParseResult: (result: ParseResult) => void;
-  gotValidationResult: (result: ValidationResult) => void;
-  gotFormattingResult: (result: FormattingResult) => void;
+  gotWorkerMessage: (result: WorkerResult) => void;
 }
 
 export const useSchemaStore = create<SchemaState>((set) => ({
@@ -76,22 +69,38 @@ export const useSchemaStore = create<SchemaState>((set) => ({
   setWorkerRef: (workerRef: MutableRefObject<Worker | undefined>) =>
     set(() => ({ workerRef })),
 
-  gotParseResult: (result: ParseResult) =>
+  gotWorkerMessage: (result: WorkerResult) =>
     set(() => {
-      return result.thing === 'schema'
-        ? { schemaErrors: result.errors, schemaParseable: result.valid }
-        : { dataErrors: result.errors, dataParseable: result.valid };
-    }),
-  gotValidationResult: (result: ValidationResult) =>
-    set(() => {
-      return result.thing === 'schema'
-        ? { schemaErrors: result.errors, schemaValid: result.valid }
-        : { dataErrors: result.errors, dataValid: result.valid };
-    }),
-  gotFormattingResult: (result: FormattingResult) =>
-    set(() => {
-      return result.thing === 'schema'
-        ? { schemaFormatted: result.formatted }
-        : { dataFormatted: result.formatted };
+      switch (result.command) {
+        case 'parse-result':
+          return result.thing === 'schema'
+            ? { schemaErrors: result.errors, schemaParseable: result.valid }
+            : { dataErrors: result.errors, dataParseable: result.valid };
+          break;
+        case 'validation-result':
+          return result.thing === 'schema'
+            ? { schemaErrors: result.errors, schemaValid: result.valid }
+            : { dataErrors: result.errors, dataValid: result.valid };
+          break;
+        case 'formatting-result':
+          return result.thing === 'schema'
+            ? { schemaFormatted: result.formatted }
+            : { dataFormatted: result.formatted };
+          break;
+        case 'format-payload':
+          return result.thing === 'schema'
+            ? { rawSchema: result.formatted }
+            : { rawData: result.formatted };
+          break;
+        case 'convert-result':
+          return result.thing === 'schema'
+            ? { rawSchema: result.converted }
+            : { rawData: result.converted };
+          break;
+        case 'derive-schema-result':
+          return { rawSchema: result.schema };
+        case 'derive-data-result':
+          return { rawData: result.data, dataErrors: result.errors };
+      }
     }),
 }));

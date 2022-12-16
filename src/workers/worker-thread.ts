@@ -106,6 +106,7 @@ export interface ConvertResult {
 export interface DeriveDataResult {
   command: 'derive-data-result';
   data: string | null;
+  errors: ErrorObject[];
 }
 
 export interface DeriveSchemaResult {
@@ -275,11 +276,21 @@ function onConvertRequest(req: ConvertRequest) {
 function onDeriveDataRequest(req: DeriveDataRequest) {
   if (!store.schema.obj) return;
 
-  const data = jsonToString(deriveDataFromSchema(store.schema.obj));
+  let data: string | null = null;
+  let errors: ErrorObject[] = [];
 
+  try {
+    console.time('derive-data');
+    data = jsonToString(deriveDataFromSchema(store.schema.obj));
+  } catch (err) {
+    errors = [generateError('derive-data', err as Error)];
+  } finally {
+    console.timeEnd('derive-data');
+  }
   sendMessageToMainThread({
     command: 'derive-data-result',
     data,
+    errors,
   });
 }
 

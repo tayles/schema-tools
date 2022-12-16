@@ -33,9 +33,6 @@ export function validateJsonSchema(
     const schema = (validateFn.schema as SchemaObject)?.$schema as string;
     return { ok: true, schema, validateFn };
   } catch (err) {
-    console.error(err);
-    console.error(ajv.errors);
-    console.warn(ajv.errorsText(ajv.errors));
     const errors = ajv.errors || [generateError('strict-mode', err as Error)];
     return { ok: false, errors };
   }
@@ -58,9 +55,6 @@ export function validateDataAgainstJsonSchema(
 
     return { ok: true };
   } catch (err) {
-    console.error(err);
-    console.error(ajv.errors);
-    console.warn(validateFn.errors);
     const errors = validateFn?.errors || [
       generateError('strict-mode', err as Error),
     ];
