@@ -5,6 +5,12 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
+import nextPwa from 'next-pwa';
+
+const withPWA = nextPwa({
+  dest: 'public',
+});
+
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
@@ -14,4 +20,8 @@ const config = {
     defaultLocale: 'en',
   },
 };
-export default config;
+
+// @ts-ignore
+const allConfig = withPWA(config);
+
+export default allConfig;
