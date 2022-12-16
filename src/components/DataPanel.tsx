@@ -10,7 +10,7 @@ import Button from './Button';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyButton';
-import type { WorkerRequest } from '@/workers/validator';
+import type { WorkerRequest } from '@/workers/worker-thread';
 
 const DataPanel = () => {
   const isParseable = useSchemaStore((state) => state.dataParseable);

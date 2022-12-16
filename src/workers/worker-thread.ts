@@ -5,11 +5,12 @@ import {
   type JSONValue,
   jsonToString,
 } from '@/utils/json';
-import type { ErrorObject } from 'ajv';
+import type { ErrorObject, ValidateFunction } from 'ajv';
 import Ajv from 'ajv';
 import {
   generateError,
   validateJsonSchema,
+  validateDataAgainstJsonSchema,
 } from '@/utils/validate-json-schema';
 import { formatJson, formatYaml } from '@/utils/prettier-format';
 import { jsonToYaml, yamlToJson } from '@/utils/yaml';
@@ -19,6 +20,7 @@ import {
 } from '@/utils/derive-json-schema';
 
 const ajv = new Ajv({ allErrors: true, verbose: true, strict: true });
+let validateFn: ValidateFunction<unknown> | null = null;
 
 const store: Record<
   Thing,
@@ -138,23 +140,50 @@ function parse(input: string, language: SupportedLanguages) {
   return { valid, obj, errors };
 }
 
-function validate(thing: Thing, obj: JSONValue) {
+function validateSchema(schema: JSONValue) {
   let valid = false;
   let errors: ErrorObject[] = [];
 
-  if (thing === 'schema') {
+  try {
+    console.time('validate-schema');
+    const validationResult = validateJsonSchema(schema as JSONSchema, ajv);
+    valid = validationResult.ok;
+    if (validationResult.ok) {
+      validateFn = validationResult.validateFn;
+    } else {
+      errors = validationResult.errors;
+      validateFn = null;
+    }
+  } catch (err) {
+    // failed to parse
+    errors = [generateError('validate-schema', err as Error)];
+  } finally {
+    console.timeEnd('validate-schema');
+  }
+  return { valid, errors };
+}
+
+function validateData(data: JSONValue) {
+  let valid = false;
+  let errors: ErrorObject[] = [];
+
+  if (validateFn) {
     try {
-      console.time('validate');
-      const validationResult = validateJsonSchema(obj as JSONSchema, ajv);
+      console.time('validate-data');
+      const validationResult = validateDataAgainstJsonSchema(
+        data,
+        ajv,
+        validateFn,
+      );
       valid = validationResult.ok;
       if (!validationResult.ok) {
         errors = validationResult.errors;
       }
     } catch (err) {
       // failed to parse
-      errors = [generateError('validate', err as Error)];
+      errors = [generateError('validate-data', err as Error)];
     } finally {
-      console.timeEnd('validate');
+      console.timeEnd('validate-data');
     }
   }
   return { valid, errors };
@@ -194,7 +223,8 @@ function onInputChange(req: ChangeRequest) {
   store[thing].obj = obj;
 
   if (obj) {
-    const { valid, errors } = validate(thing, obj);
+    const { valid, errors } =
+      thing === 'schema' ? validateSchema(obj) : validateData(obj);
     sendMessageToMainThread({
       command: 'validation-result',
       thing,

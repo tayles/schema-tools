@@ -15,7 +15,7 @@ import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyButton';
-import type { WorkerResult, WorkerRequest } from '@/workers/validator';
+import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
 
 const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
@@ -64,7 +64,7 @@ const SchemaPanel = () => {
   // setup communication with worker thread
   useEffect(() => {
     workerRef.current = new Worker(
-      new URL('../workers/validator.ts', import.meta.url),
+      new URL('../workers/worker-thread.ts', import.meta.url),
     );
     workerRef.current.onmessage = (event: MessageEvent<WorkerResult>) => {
       const result = event.data;

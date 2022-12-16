@@ -1,14 +1,13 @@
-import * as exampleDataJson from '../../public/examples/data.json';
-import * as exampleSchemaJson from '../../public/examples/schema.json';
-
 import type {
   FormattingResult,
   ParseResult,
   ValidationResult,
-} from '@/workers/validator';
+} from '@/workers/worker-thread';
 
 import type { MutableRefObject } from 'react';
 import create from 'zustand';
+import exampleDataJson from '../../public/examples/data.json';
+import exampleSchemaJson from '../../public/examples/schema.json';
 import { jsonToString } from '@/utils/json';
 
 interface ErrorObject {
