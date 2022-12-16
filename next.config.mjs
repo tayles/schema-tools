@@ -5,11 +5,11 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
-import nextPwa from 'next-pwa';
+// import nextPwa from 'next-pwa';
 
-const withPWA = nextPwa({
-  dest: 'public',
-});
+// const withPWA = nextPwa({
+//   dest: 'public',
+// });
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -22,6 +22,6 @@ const config = {
 };
 
 // @ts-ignore
-const allConfig = withPWA(config);
+// const allConfig = withPWA(config);
 
-export default allConfig;
+export default config;
