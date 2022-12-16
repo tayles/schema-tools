@@ -13,7 +13,7 @@ const defaultPrettierOptions: Options = {
 export function formatJson(str: string): string {
   return prettier.format(str, {
     ...defaultPrettierOptions,
-    filepath: 'x.json',
+    parser: 'json',
     plugins: [parserBabel],
   });
 }
@@ -21,7 +21,7 @@ export function formatJson(str: string): string {
 export function formatYaml(str: string): string {
   return prettier.format(str, {
     ...defaultPrettierOptions,
-    filepath: 'x.yaml',
+    parser: 'yaml',
     plugins: [parserYaml],
   });
 }
