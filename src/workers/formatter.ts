@@ -1,7 +1,5 @@
 import { type SupportedLanguages } from '@/utils/model';
-import parserBabel from 'prettier/parser-babel';
-import parserYaml from 'prettier/parser-yaml';
-import prettier, { type Options } from 'prettier';
+import { formatJson, formatYaml } from '@/utils/prettier-format';
 
 export interface FormatRequest {
   language: SupportedLanguages;
@@ -12,26 +10,6 @@ export interface FormatRequest {
 export interface FormatResponse {
   language: SupportedLanguages;
   value: string;
-}
-
-const defaultPrettierOptions: Options = {
-  semi: false,
-};
-
-function formatJson(str: string): string {
-  return prettier.format(str, {
-    ...defaultPrettierOptions,
-    filepath: 'x.json',
-    plugins: [parserBabel],
-  });
-}
-
-function formatYaml(str: string): string {
-  return prettier.format(str, {
-    ...defaultPrettierOptions,
-    filepath: 'x.yaml',
-    plugins: [parserYaml],
-  });
 }
 
 addEventListener('message', (event: MessageEvent<FormatRequest>) => {
