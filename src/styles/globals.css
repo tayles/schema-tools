@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --theme: #00a35b;
+  --theme-alt: #2876f9;
+  --accent: #ff7519;
+  --accent-alt: #ffe460;
+  --bg: #303030;
+  --text: #fff;
+}
+
 body {
   @apply text-white selection:bg-purple-500 selection:text-white;
 }

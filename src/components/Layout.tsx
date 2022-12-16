@@ -27,10 +27,10 @@ const Layout = ({ title, children }: Props) => {
           content="Tools for APIs, JSON Schema and more"
         />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-config" content="/icons/browserconfig.xml" />
+        <meta name="msapplication-config" content="/browserconfig.xml" />
         <meta name="msapplication-TileColor" content="#2B5797" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#00a35b" />
 
         <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" />
         <link
@@ -78,7 +78,7 @@ const Layout = ({ title, children }: Props) => {
         />
         <meta
           name="twitter:image"
-          content="https://schema-tools.tayles.co.uk/icons/android-chrome-192x192.png"
+          content="https://schema-tools.tayles.co.uk/img/schema-tools-opengraph.png"
         />
         <meta name="twitter:creator" content="@DavidWShadow" />
         <meta property="og:type" content="website" />
@@ -91,7 +91,7 @@ const Layout = ({ title, children }: Props) => {
         <meta property="og:url" content="https://schema-tools.tayles.co.uk" />
         <meta
           property="og:image"
-          content="https://schema-tools.tayles.co.uk/icons/apple-touch-icon.png"
+          content="https://schema-tools.tayles.co.uk/img/schema-tools-opengraph.png"
         />
       </Head>
 
