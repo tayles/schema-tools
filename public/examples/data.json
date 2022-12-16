@@ -1,30 +1,5 @@
 {
-  "errors": [
-    {
-      "id": "sint ut aliqua et dolore",
-      "code": "aute commodo et qui do",
-      "title": "officia Lorem amet",
-      "source": {
-        "parameter": "laboris",
-        "pointer": "laborum ut tempor velit ullamco"
-      },
-      "status": "consectetur velit irure"
-    },
-    {
-      "detail": "deserunt nostrud sed irure cupidatat",
-      "id": "anim id",
-      "title": "ipsum quis consectetur enim esse",
-      "meta": {
-        "sint_258": "in magna"
-      }
-    }
-  ],
-  "links": {
-    "culpa66": "https://d.vhdmB6HdaPClfO1LxHDow6+q9G7?"
-  },
-  "meta": {
-    "ipsum_e": "nostrud eiusmod ad culpa",
-    "deserunt_54": "veniam labore nulla"
-  },
-  "jsonapi": {}
+  "firstName": "David",
+  "lastName": "Taylor",
+  "age": 123
 }

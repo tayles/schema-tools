@@ -14,19 +14,23 @@ import type {
   GenerateFakeDataResponse,
 } from '@/workers/faker';
 import { useSchemaStore } from '@/store/state';
-import { type JSONSchema, stringToJson } from '@/utils/json';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyButton';
+import type {
+  ValidationRequest,
+  ValidationResponse,
+} from '@/workers/validator';
 
 const SchemaPanel = () => {
-  const setSchema = useSchemaStore((state) => state.setSchema);
   const rawSchema = useSchemaStore((state) => state.rawSchema);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
   const setRawData = useSchemaStore((state) => state.setRawData);
   const isSchemaValid = useSchemaStore((state) => state.schemaValid);
-  const setSchemaErrors = useSchemaStore((state) => state.setSchemaErrors);
   const schemaErrors = useSchemaStore((state) => state.schemaErrors);
+  const gotValidationResponse = useSchemaStore(
+    (state) => state.gotValidationResponse,
+  );
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
@@ -34,20 +38,7 @@ const SchemaPanel = () => {
   const formatWorkerRef = useRef<Worker>();
   const convertWorkerRef = useRef<Worker>();
   const generateDataWorkerRef = useRef<Worker>();
-
-  useEffect(() => {
-    try {
-      const schema = stringToJson(rawSchema);
-      setSchema(schema as JSONSchema);
-    } catch (err) {
-      console.log('Invalid json', err);
-      setSchemaErrors([
-        {
-          message: (err as Error).message,
-        },
-      ]);
-    }
-  }, [rawSchema, setSchema, setSchemaErrors]);
+  const validatorWorkerRef = useRef<Worker>();
 
   useEffect(() => {
     if (file) {
@@ -119,6 +110,19 @@ const SchemaPanel = () => {
     };
   }, [setRawData]);
 
+  // validate schema
+  useEffect(() => {
+    validatorWorkerRef.current = new Worker(
+      new URL('../workers/validator.ts', import.meta.url),
+    );
+    validatorWorkerRef.current.onmessage = (
+      event: MessageEvent<ValidationResponse>,
+    ) => gotValidationResponse(event.data);
+    return () => {
+      validatorWorkerRef.current?.terminate();
+    };
+  }, [gotValidationResponse]);
+
   const handleFormat = () => {
     const req: FormatRequest = {
       filename: file?.name ?? '',
@@ -148,6 +152,16 @@ const SchemaPanel = () => {
     handleConvert();
   };
 
+  const handleSchemaChange = (schema: string) => {
+    setRawSchema(schema);
+
+    const req: ValidationRequest = {
+      language,
+      rawSchema: schema,
+    };
+    validatorWorkerRef.current?.postMessage(req);
+  };
+
   return (
     <Panel title="Schema">
       <div className="flex flex-1 flex-col gap-2">
@@ -167,7 +181,7 @@ const SchemaPanel = () => {
           <CodeEditor
             language={language}
             code={rawSchema}
-            onChange={setRawSchema}
+            onChange={(value) => handleSchemaChange(value)}
           />
         </div>
       </div>

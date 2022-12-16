@@ -4,9 +4,10 @@ import * as exampleSchemaJson from '../../public/examples/schema.json';
 import { type JSONSchema, type JSONValue, jsonToString } from '@/utils/json';
 
 import create from 'zustand';
+import { ValidationResponse } from '@/workers/validator';
 
 interface ErrorObject {
-  message: string;
+  [x: string]: unknown;
 }
 
 interface SchemaState {
@@ -28,6 +29,8 @@ interface SchemaState {
   setRawData: (rawData: string) => void;
   setSchemaErrors: (errors: ErrorObject[]) => void;
   setDataErrors: (errors: ErrorObject[]) => void;
+
+  gotValidationResponse: (result: ValidationResponse) => void;
 }
 
 export const useSchemaStore = create<SchemaState>((set) => ({
@@ -52,4 +55,12 @@ export const useSchemaStore = create<SchemaState>((set) => ({
     set(() => ({ schemaErrors, schema: null, schemaValid: false })),
   setDataErrors: (dataErrors: ErrorObject[]) =>
     set(() => ({ dataErrors, data: null, dataValid: false })),
+
+  gotValidationResponse: (result: ValidationResponse) =>
+    set(() => ({
+      schemaErrors: result.errors as any,
+      schema: result.schemaObject,
+      schemaFormatted: result.isFormatted,
+      schemaValid: result.isValidSchema,
+    })),
 }));
