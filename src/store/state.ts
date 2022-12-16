@@ -1,14 +1,10 @@
+import type { ErrorInstance } from '@/utils/model';
 import type { MutableRefObject } from 'react';
 import type { WorkerResult } from '@/workers/worker-thread';
 import create from 'zustand';
 import exampleDataJson from '../../public/examples/data.json';
 import exampleSchemaJson from '../../public/examples/schema.json';
 import { jsonToString } from '@/utils/json';
-
-interface ErrorObject {
-  message: string;
-  [x: string]: unknown;
-}
 
 interface SchemaState {
   schemaVersion: string | null;
@@ -24,16 +20,16 @@ interface SchemaState {
   dataValid: boolean;
   dataFormatted: boolean;
 
-  schemaErrors: ErrorObject[];
-  dataErrors: ErrorObject[];
+  schemaErrors: ErrorInstance[];
+  dataErrors: ErrorInstance[];
 
   workerRef: MutableRefObject<Worker | undefined> | null;
 
   setRawSchema: (rawSchema: string) => void;
   setRawData: (rawData: string) => void;
 
-  setSchemaErrors: (errors: ErrorObject[]) => void;
-  setDataErrors: (errors: ErrorObject[]) => void;
+  setSchemaErrors: (errors: ErrorInstance[]) => void;
+  setDataErrors: (errors: ErrorInstance[]) => void;
 
   setWorkerRef: (workerRef: MutableRefObject<Worker | undefined>) => void;
 
@@ -62,9 +58,9 @@ export const useSchemaStore = create<SchemaState>((set) => ({
   setRawSchema: (rawSchema: string) => set(() => ({ rawSchema })),
   setRawData: (rawData: string) => set(() => ({ rawData })),
 
-  setSchemaErrors: (schemaErrors: ErrorObject[]) =>
+  setSchemaErrors: (schemaErrors: ErrorInstance[]) =>
     set(() => ({ schemaErrors })),
-  setDataErrors: (dataErrors: ErrorObject[]) => set(() => ({ dataErrors })),
+  setDataErrors: (dataErrors: ErrorInstance[]) => set(() => ({ dataErrors })),
 
   setWorkerRef: (workerRef: MutableRefObject<Worker | undefined>) =>
     set(() => ({ workerRef })),
@@ -89,18 +85,18 @@ export const useSchemaStore = create<SchemaState>((set) => ({
           break;
         case 'format-payload':
           return result.thing === 'schema'
-            ? { rawSchema: result.formatted }
-            : { rawData: result.formatted };
+            ? { rawSchema: result.formatted ?? '' }
+            : { rawData: result.formatted ?? '' };
           break;
         case 'convert-result':
           return result.thing === 'schema'
-            ? { rawSchema: result.converted }
-            : { rawData: result.converted };
+            ? { rawSchema: result.converted ?? '' }
+            : { rawData: result.converted ?? '' };
           break;
         case 'derive-schema-result':
-          return { rawSchema: result.schema };
+          return { rawSchema: result.schema ?? '' };
         case 'derive-data-result':
-          return { rawData: result.data, dataErrors: result.errors };
+          return { rawData: result.data ?? '', dataErrors: result.errors };
       }
     }),
 }));

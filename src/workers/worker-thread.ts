@@ -1,11 +1,11 @@
-import type { Thing, SupportedLanguages } from '@/utils/model';
+import type { Thing, SupportedLanguages, ErrorInstance } from '@/utils/model';
 import {
   type JSONSchema,
   stringToJson,
   type JSONValue,
   jsonToString,
 } from '@/utils/json';
-import type { ErrorObject, ValidateFunction } from 'ajv';
+import type { ValidateFunction } from 'ajv';
 import Ajv from 'ajv';
 import {
   generateError,
@@ -74,21 +74,21 @@ export interface ParseResult {
   command: 'parse-result';
   thing: Thing;
   valid: boolean;
-  errors: ErrorObject[];
+  errors: ErrorInstance[];
 }
 
 export interface ValidationResult {
   command: 'validation-result';
   thing: Thing;
   valid: boolean;
-  errors: ErrorObject[];
+  errors: ErrorInstance[];
 }
 
 export interface FormattingResult {
   command: 'formatting-result';
   thing: Thing;
   formatted: boolean;
-  errors: ErrorObject[];
+  errors: ErrorInstance[];
 }
 
 export interface FormatPayloadResult {
@@ -106,7 +106,7 @@ export interface ConvertResult {
 export interface DeriveDataResult {
   command: 'derive-data-result';
   data: string | null;
-  errors: ErrorObject[];
+  errors: ErrorInstance[];
 }
 
 export interface DeriveSchemaResult {
@@ -126,7 +126,7 @@ export type WorkerResult =
 function parse(input: string, language: SupportedLanguages) {
   let valid = false;
   let obj: JSONValue | null = null;
-  let errors: ErrorObject[] = [];
+  let errors: ErrorInstance[] = [];
 
   try {
     console.time('parse');
@@ -143,7 +143,7 @@ function parse(input: string, language: SupportedLanguages) {
 
 function validateSchema(schema: JSONValue) {
   let valid = false;
-  let errors: ErrorObject[] = [];
+  let errors: ErrorInstance[] = [];
 
   try {
     console.time('validate-schema');
@@ -156,7 +156,6 @@ function validateSchema(schema: JSONValue) {
       validateFn = null;
     }
   } catch (err) {
-    // failed to parse
     errors = [generateError('validate-schema', err as Error)];
   } finally {
     console.timeEnd('validate-schema');
@@ -166,7 +165,7 @@ function validateSchema(schema: JSONValue) {
 
 function validateData(data: JSONValue) {
   let valid = false;
-  let errors: ErrorObject[] = [];
+  let errors: ErrorInstance[] = [];
 
   if (validateFn) {
     try {
@@ -181,7 +180,6 @@ function validateData(data: JSONValue) {
         errors = validationResult.errors;
       }
     } catch (err) {
-      // failed to parse
       errors = [generateError('validate-data', err as Error)];
     } finally {
       console.timeEnd('validate-data');
@@ -193,7 +191,7 @@ function validateData(data: JSONValue) {
 function format(input: string, language: SupportedLanguages) {
   let formatted = false;
   let formattedValue: string | null = null;
-  let errors: ErrorObject[] = [];
+  let errors: ErrorInstance[] = [];
 
   try {
     console.time('format');
@@ -202,7 +200,6 @@ function format(input: string, language: SupportedLanguages) {
     formatted =
       formattedValue.length === input.length && formattedValue === input;
   } catch (err) {
-    // failed to parse
     errors = [generateError('format', err as Error)];
   } finally {
     console.timeEnd('format');
@@ -273,11 +270,12 @@ function onConvertRequest(req: ConvertRequest) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function onDeriveDataRequest(req: DeriveDataRequest) {
   if (!store.schema.obj) return;
 
   let data: string | null = null;
-  let errors: ErrorObject[] = [];
+  let errors: ErrorInstance[] = [];
 
   try {
     console.time('derive-data');
@@ -294,6 +292,7 @@ function onDeriveDataRequest(req: DeriveDataRequest) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function onDeriveSchemaRequest(req: DeriveSchemaRequest) {
   if (!store.data.obj) return;
 

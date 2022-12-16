@@ -1,7 +1,8 @@
-import type { ErrorObject, SchemaObject, ValidateFunction } from 'ajv';
 import type { JSONSchema, JSONValue } from './json';
+import type { SchemaObject, ValidateFunction } from 'ajv';
 
 import type Ajv from 'ajv';
+import type { ErrorInstance } from './model';
 
 interface JsonSchemaValidationSuccess {
   ok: true;
@@ -11,7 +12,7 @@ interface JsonSchemaValidationSuccess {
 
 interface JsonSchemaValidationFailure {
   ok: false;
-  errors: ErrorObject[];
+  errors: ErrorInstance[];
 }
 
 type JsonSchemaValidationResult =
@@ -62,7 +63,7 @@ export function validateDataAgainstJsonSchema(
   }
 }
 
-export function generateError(keyword: string, err: Error): ErrorObject {
+export function generateError(keyword: string, err: Error): ErrorInstance {
   return {
     keyword,
     message: err.message,
