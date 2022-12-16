@@ -5,40 +5,40 @@ import Button from './Button';
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
-import { SupportedLanguagesArr, type SupportedLanguages } from '@/utils/model';
-import type { ConvertResponse, ConvertRequest } from '@/workers/converter';
-import type { FormatResponse, FormatRequest } from '@/workers/formatter';
+import {
+  getOtherLanguage,
+  SupportedLanguagesArr,
+  type SupportedLanguages,
+} from '@/utils/model';
 import ButtonGroup from './ButtonGroup';
-import type {
-  GenerateFakeDataRequest,
-  GenerateFakeDataResponse,
-} from '@/workers/faker';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyButton';
-import type {
-  ValidationRequest,
-  ValidationResponse,
-} from '@/workers/validator';
+import type { WorkerResult, WorkerRequest } from '@/workers/validator';
 
 const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
+  const isParseable = useSchemaStore((state) => state.schemaParseable);
+  const isValid = useSchemaStore((state) => state.schemaValid);
+  const isFormatted = useSchemaStore((state) => state.schemaFormatted);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
   const setRawData = useSchemaStore((state) => state.setRawData);
-  const isSchemaValid = useSchemaStore((state) => state.schemaValid);
   const schemaErrors = useSchemaStore((state) => state.schemaErrors);
-  const gotValidationResponse = useSchemaStore(
-    (state) => state.gotValidationResponse,
+  const setWorkerRef = useSchemaStore((state) => state.setWorkerRef);
+  const gotParseResult = useSchemaStore((state) => state.gotParseResult);
+  const gotValidationResult = useSchemaStore(
+    (state) => state.gotValidationResult,
+  );
+  const gotFormattingResult = useSchemaStore(
+    (state) => state.gotFormattingResult,
   );
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
 
-  const formatWorkerRef = useRef<Worker>();
-  const convertWorkerRef = useRef<Worker>();
-  const generateDataWorkerRef = useRef<Worker>();
-  const validatorWorkerRef = useRef<Worker>();
+  const workerRef = useRef<Worker>();
+  setWorkerRef(workerRef);
 
   useEffect(() => {
     if (file) {
@@ -61,127 +61,114 @@ const SchemaPanel = () => {
     }
   }, [file, setRawSchema]);
 
-  // prettier formatting
+  // setup communication with worker thread
   useEffect(() => {
-    formatWorkerRef.current = new Worker(
-      new URL('../workers/formatter.ts', import.meta.url),
-    );
-    formatWorkerRef.current.onmessage = (
-      event: MessageEvent<FormatResponse>,
-    ) => {
-      setRawSchema('');
-      setLanguage(event.data.language);
-      setRawSchema(event.data.value);
-    };
-    return () => {
-      formatWorkerRef.current?.terminate();
-    };
-  }, [setRawSchema]);
-
-  // convert JSON <> YAML
-  useEffect(() => {
-    convertWorkerRef.current = new Worker(
-      new URL('../workers/converter.ts', import.meta.url),
-    );
-    convertWorkerRef.current.onmessage = (
-      event: MessageEvent<ConvertResponse>,
-    ) => {
-      setRawSchema('');
-      setLanguage(event.data.language);
-      setRawSchema(event.data.value);
-    };
-    return () => {
-      convertWorkerRef.current?.terminate();
-    };
-  }, [setRawSchema]);
-
-  // generate data from json schema
-  useEffect(() => {
-    generateDataWorkerRef.current = new Worker(
-      new URL('../workers/faker.ts', import.meta.url),
-    );
-    generateDataWorkerRef.current.onmessage = (
-      event: MessageEvent<GenerateFakeDataResponse>,
-    ) => {
-      setRawData(event.data.data);
-    };
-    return () => {
-      generateDataWorkerRef.current?.terminate();
-    };
-  }, [setRawData]);
-
-  // validate schema
-  useEffect(() => {
-    validatorWorkerRef.current = new Worker(
+    workerRef.current = new Worker(
       new URL('../workers/validator.ts', import.meta.url),
     );
-    validatorWorkerRef.current.onmessage = (
-      event: MessageEvent<ValidationResponse>,
-    ) => gotValidationResponse(event.data);
-    return () => {
-      validatorWorkerRef.current?.terminate();
+    workerRef.current.onmessage = (event: MessageEvent<WorkerResult>) => {
+      const result = event.data;
+      console.log(':: UI Thread IN', result);
+      switch (result.command) {
+        case 'parse-result':
+          gotParseResult(result);
+          break;
+        case 'validation-result':
+          gotValidationResult(result);
+          break;
+        case 'formatting-result':
+          gotFormattingResult(result);
+          break;
+        case 'format-payload':
+          result.thing === 'schema'
+            ? setRawSchema(result.formatted ?? '')
+            : setRawData(result.formatted ?? '');
+          break;
+        case 'convert-result':
+          setRawSchema(result.converted ?? '');
+          break;
+        case 'derive-schema-result':
+          setRawSchema(result.schema ?? '');
+          break;
+        case 'derive-data-result':
+          setRawData(result.data ?? '');
+          break;
+      }
     };
-  }, [gotValidationResponse]);
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, [
+    workerRef,
+    setRawSchema,
+    setRawData,
+    gotParseResult,
+    gotValidationResult,
+    gotFormattingResult,
+  ]);
+
+  useEffect(() => {
+    sendMessageToWorker({
+      command: 'input-change',
+      thing: 'schema',
+      language,
+      input: rawSchema,
+    });
+  }, [language, rawSchema]);
 
   const handleFormat = () => {
-    const req: FormatRequest = {
-      filename: file?.name ?? '',
+    sendMessageToWorker({
+      command: 'format',
+      thing: 'schema',
       language,
-      value: rawSchema ?? '',
-    };
-    formatWorkerRef.current?.postMessage(req);
-  };
-
-  const handleGenerateData = () => {
-    const req: GenerateFakeDataRequest = {
-      schema: rawSchema ?? '',
-    };
-    generateDataWorkerRef.current?.postMessage(req);
+    });
   };
 
   const handleConvert = () => {
-    const req: ConvertRequest = {
-      filename: file?.name ?? '',
-      language,
-      value: rawSchema ?? '',
-    };
-    convertWorkerRef.current?.postMessage(req);
+    sendMessageToWorker({
+      command: 'convert',
+      thing: 'schema',
+      language: getOtherLanguage(language),
+    });
   };
 
-  const handleLanguageChange = () => {
-    handleConvert();
+  const handleDeriveData = () => {
+    sendMessageToWorker({
+      command: 'derive-data',
+    });
   };
 
-  const handleSchemaChange = (schema: string) => {
-    setRawSchema(schema);
-
-    const req: ValidationRequest = {
-      language,
-      rawSchema: schema,
-    };
-    validatorWorkerRef.current?.postMessage(req);
-  };
+  function sendMessageToWorker(request: WorkerRequest) {
+    workerRef.current?.postMessage(request);
+  }
 
   return (
     <Panel title="Schema">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
           <ButtonGroup
-            onClick={handleLanguageChange}
+            onClick={handleConvert}
             buttons={Array.from(SupportedLanguagesArr)}
           />
-          <Button onClick={handleFormat}>Format</Button>
-          <Button onClick={handleGenerateData}>Gen Data</Button>
+          <Button onClick={handleFormat} disabled={isFormatted}>
+            Format {isFormatted ? '✅' : '❌'}
+          </Button>
+          <Button
+            onClick={handleDeriveData}
+            disabled={!isParseable || !isValid}
+          >
+            Gen Data
+          </Button>
           <CopyButton text={rawSchema} />
           <ErrorCountBadge count={schemaErrors?.length} />
-          <ValidLabel valid={isSchemaValid} />
+          <ValidLabel valid={isParseable && isValid} />
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
           <CodeEditor
             language={language}
             code={rawSchema}
-            onChange={(value) => handleSchemaChange(value)}
+            onChange={setRawSchema}
           />
         </div>
       </div>

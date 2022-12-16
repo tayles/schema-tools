@@ -7,22 +7,19 @@ import Panel from './Panel';
 import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import Button from './Button';
-import { deriveSchemaFromData } from '@/utils/derive-json-schema';
-import { jsonToString, stringToJson } from '@/utils/json';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyButton';
+import type { WorkerRequest } from '@/workers/validator';
 
 const DataPanel = () => {
-  const setSchema = useSchemaStore((state) => state.setSchema);
-  const setRawSchema = useSchemaStore((state) => state.setRawSchema);
-  const data = useSchemaStore((state) => state.data);
+  const isParseable = useSchemaStore((state) => state.dataParseable);
+  const isValid = useSchemaStore((state) => state.dataValid);
+  const isFormatted = useSchemaStore((state) => state.dataFormatted);
   const rawData = useSchemaStore((state) => state.rawData);
-  const setDataErrors = useSchemaStore((state) => state.setDataErrors);
   const dataErrors = useSchemaStore((state) => state.dataErrors);
-  const setData = useSchemaStore((state) => state.setData);
   const setRawData = useSchemaStore((state) => state.setRawData);
-  const isDataValid = useSchemaStore((state) => state.dataValid);
+  const workerRef = useSchemaStore((state) => state.workerRef);
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
@@ -49,38 +46,46 @@ const DataPanel = () => {
   }, [file, setRawData]);
 
   useEffect(() => {
-    try {
-      const data = stringToJson(rawData);
-      setData(data);
-    } catch (err) {
-      console.log('Invalid json', err);
-      setDataErrors([
-        {
-          message: (err as Error).message,
-        },
-      ]);
-    }
-  }, [rawData, setData, setDataErrors]);
+    sendMessageToWorker({
+      command: 'input-change',
+      thing: 'data',
+      language,
+      input: rawData,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, rawData]);
+
+  const handleFormat = () => {
+    sendMessageToWorker({
+      command: 'format',
+      thing: 'data',
+      language,
+    });
+  };
 
   const handleDeriveSchema = () => {
-    if (!data) {
-      return;
-    }
-    console.time('derive-schema');
-    const schema = deriveSchemaFromData(data);
-    console.timeEnd('derive-schema');
-    setSchema(schema);
-    setRawSchema(jsonToString(schema));
+    sendMessageToWorker({
+      command: 'derive-schema',
+    });
   };
+
+  function sendMessageToWorker(request: WorkerRequest) {
+    workerRef?.current?.postMessage(request);
+  }
 
   return (
     <Panel title="Data">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
-          <Button onClick={handleDeriveSchema}>Derive Schema</Button>
+          <Button disabled={!isParseable} onClick={handleDeriveSchema}>
+            Derive Schema
+          </Button>
+          <Button disabled={isFormatted} onClick={handleFormat}>
+            Format {isFormatted ? '✅' : '❌'}
+          </Button>
           <CopyButton text={rawData} />
           <ErrorCountBadge count={dataErrors?.length} />
-          <ValidLabel valid={isDataValid} />
+          <ValidLabel valid={isParseable && isValid} />
         </div>
         <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">

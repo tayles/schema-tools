@@ -13,7 +13,7 @@ export type JSONValue =
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function jsonToString(object: any): string {
-  return JSON.stringify(object, undefined, 2);
+  return JSON.stringify(object, undefined, 2) + '\n';
 }
 
 export function stringToJson(str: string): JSONValue {

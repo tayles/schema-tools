@@ -4,7 +4,10 @@ import parserBabel from 'prettier/parser-babel';
 import parserYaml from 'prettier/parser-yaml';
 
 const defaultPrettierOptions: Options = {
-  semi: false,
+  trailingComma: 'all',
+  semi: true,
+  singleQuote: true,
+  printWidth: 80,
 };
 
 export function formatJson(str: string): string {

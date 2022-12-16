@@ -7,3 +7,5 @@ export function getOtherLanguage(
 ): SupportedLanguages {
   return language === 'json' ? 'yaml' : 'json';
 }
+
+export type Thing = 'schema' | 'data';

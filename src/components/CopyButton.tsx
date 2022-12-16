@@ -9,7 +9,7 @@ const CopyButton = ({ text }: Props) => {
   const [, copy] = useCopyToClipboard();
 
   return (
-    <Button onClick={() => copy(text)}>
+    <Button disabled={!text} onClick={() => copy(text)}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
