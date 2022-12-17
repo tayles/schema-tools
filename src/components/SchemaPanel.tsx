@@ -1,7 +1,7 @@
 import { getFileContents, getFileExtension } from '@/utils/file';
 import { useEffect, useRef, useState } from 'react';
 
-import Button from './Button';
+import { Button } from '@mantine/core';
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
@@ -12,6 +12,7 @@ import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyToClipboardButton';
 import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
 import { SegmentedControl } from '@mantine/core';
+import FormatButton from './FormatButton';
 
 const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
@@ -116,20 +117,19 @@ const SchemaPanel = () => {
               handleConvert(language as SupportedLanguages)
             }
           />
-          <Button onClick={handleFormat} disabled={isFormatted}>
-            Format {isFormatted ? '✅' : '❌'}
-          </Button>
+          <FormatButton onClick={handleFormat} disabled={isFormatted} />
           <Button
+            compact
             onClick={handleDeriveData}
             disabled={!isParseable || !isValid}
           >
             Gen Data
           </Button>
+          <FileUploadInput onFileLoad={setFile} />
           <CopyButton thing="schema" text={rawSchema} />
           <ErrorCountBadge count={schemaErrors?.length} />
           <ValidLabel valid={isParseable && isValid} />
         </div>
-        <FileUploadInput onFileLoad={setFile} />
         <div className="flex-1">
           <CodeEditor
             language={language}
