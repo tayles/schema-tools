@@ -23,15 +23,7 @@ const FileDropzone = () => {
         style={{ minHeight: 220, pointerEvents: 'none' }}
       >
         <Dropzone.Accept>
-          <IconUpload
-            size={50}
-            stroke={1.5}
-            color={
-              theme.colors[theme.primaryColor][
-                theme.colorScheme === 'dark' ? 4 : 6
-              ]
-            }
-          />
+          <IconUpload size={50} stroke={1.5} />
         </Dropzone.Accept>
         <Dropzone.Reject>
           <IconX

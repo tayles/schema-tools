@@ -1,13 +1,10 @@
 import {
-  Anchor,
   AppShell,
   Burger,
   Button,
-  Footer,
   Group,
   Header,
   MediaQuery,
-  Space,
   Title,
   useMantineTheme,
 } from '@mantine/core';
