@@ -5,13 +5,13 @@ import Button from './Button';
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
-import { SupportedLanguagesArr, type SupportedLanguages } from '@/utils/model';
-import ButtonGroup from './ButtonGroup';
+import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyButton';
 import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
+import { SegmentedControl } from '@mantine/core';
 
 const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
@@ -106,11 +106,15 @@ const SchemaPanel = () => {
     <Panel title="Schema">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
-          <ButtonGroup
-            onClick={(language: string) =>
+          <SegmentedControl
+            size="xs"
+            data={[
+              { label: 'Json', value: 'json' },
+              { label: 'Yaml', value: 'yaml' },
+            ]}
+            onChange={(language: string) =>
               handleConvert(language as SupportedLanguages)
             }
-            buttons={Array.from(SupportedLanguagesArr)}
           />
           <Button onClick={handleFormat} disabled={isFormatted}>
             Format {isFormatted ? '✅' : '❌'}
