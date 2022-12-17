@@ -1,4 +1,5 @@
 import type { ErrorObject } from 'ajv';
+import type { Pointer } from './json';
 
 export const SupportedLanguagesArr = ['json', 'yaml'] as const;
 
@@ -13,4 +14,6 @@ export function getOtherLanguage(
 export type Thing = 'schema' | 'data';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ErrorInstance extends ErrorObject {}
+export interface ErrorInstance extends ErrorObject {
+  pointer?: Pointer | null;
+}

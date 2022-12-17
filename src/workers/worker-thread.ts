@@ -1,9 +1,10 @@
 import type { Thing, SupportedLanguages, ErrorInstance } from '@/utils/model';
 import {
   type JSONSchema,
-  stringToJson,
   type JSONValue,
   jsonToString,
+  parseJsonWithSourceMap,
+  type Pointers,
 } from '@/utils/json';
 import type { ValidateFunction } from 'ajv';
 import Ajv from 'ajv';
@@ -11,6 +12,7 @@ import {
   generateError,
   validateJsonSchema,
   validateDataAgainstJsonSchema,
+  decorateErrors,
 } from '@/utils/validate-json-schema';
 import { formatJson, formatYaml } from '@/utils/prettier-format';
 import { jsonToYaml, yamlToJson } from '@/utils/yaml';
@@ -24,15 +26,17 @@ let validateFn: ValidateFunction<unknown> | null = null;
 
 const store: Record<
   Thing,
-  { obj: JSONValue | null; formatted: string | null }
+  { obj: JSONValue | null; formatted: string | null; pointers: Pointers | null }
 > = {
   schema: {
     obj: null,
     formatted: null,
+    pointers: null,
   },
   data: {
     obj: null,
     formatted: null,
+    pointers: null,
   },
 };
 
@@ -123,14 +127,22 @@ export type WorkerResult =
   | DeriveDataResult
   | DeriveSchemaResult;
 
-function parse(input: string, language: SupportedLanguages) {
+function parse(thing: Thing, input: string, language: SupportedLanguages) {
   let valid = false;
   let obj: JSONValue | null = null;
   let errors: ErrorInstance[] = [];
 
   try {
     console.time('parse');
-    obj = language === 'yaml' ? yamlToJson(input) : stringToJson(input);
+    if (language === 'yaml') {
+      obj = yamlToJson(input);
+      input = jsonToString(obj);
+    }
+
+    const parseResult = parseJsonWithSourceMap(input);
+    console.log(parseResult);
+    obj = parseResult?.data;
+    store[thing].pointers = parseResult?.pointers ?? null;
     valid = true;
   } catch (err) {
     // failed to parse
@@ -152,7 +164,7 @@ function validateSchema(schema: JSONValue) {
     if (validationResult.ok) {
       validateFn = validationResult.validateFn;
     } else {
-      errors = validationResult.errors;
+      errors = decorateErrors(validationResult.errors, store.schema.pointers);
       validateFn = null;
     }
   } catch (err) {
@@ -177,7 +189,7 @@ function validateData(data: JSONValue) {
       );
       valid = validationResult.ok;
       if (!validationResult.ok) {
-        errors = validationResult.errors;
+        errors = decorateErrors(validationResult.errors, store.data.pointers);
       }
     } catch (err) {
       errors = [generateError('validate-data', err as Error)];
@@ -210,7 +222,7 @@ function format(input: string, language: SupportedLanguages) {
 function onInputChange(req: ChangeRequest) {
   const { thing, language, input } = req;
 
-  const { valid, obj, errors } = parse(input, language);
+  const { valid, obj, errors } = parse(thing, input, language);
   sendMessageToMainThread({
     command: 'parse-result',
     thing,

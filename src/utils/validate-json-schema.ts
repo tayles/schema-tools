@@ -1,4 +1,4 @@
-import type { JSONSchema, JSONValue } from './json';
+import type { JSONSchema, JSONValue, Pointers } from './json';
 import type { SchemaObject, ValidateFunction } from 'ajv';
 
 import type Ajv from 'ajv';
@@ -71,4 +71,14 @@ export function generateError(keyword: string, err: Error): ErrorInstance {
     instancePath: '',
     params: {},
   };
+}
+
+export function decorateErrors(
+  errors: ErrorInstance[],
+  pointers: Pointers | null,
+): ErrorInstance[] {
+  return errors.map((error) => ({
+    ...error,
+    pointer: pointers?.[error.instancePath ?? '/'],
+  }));
 }
