@@ -3,6 +3,7 @@ import Layout from '@/components/Layout';
 import SchemaPanel from '@/components/SchemaPanel';
 import DataPanel from '@/components/DataPanel';
 import Head from 'next/head';
+import FileDropzone from '@/components/FileDropzone';
 
 const Home: NextPage = () => {
   return (
@@ -19,6 +20,7 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
+      <FileDropzone />
     </Layout>
   );
 };
