@@ -2,9 +2,12 @@ import {
   Anchor,
   AppShell,
   Burger,
+  Button,
   Footer,
+  Group,
   Header,
   MediaQuery,
+  Space,
   Title,
   useMantineTheme,
 } from '@mantine/core';
@@ -50,12 +53,12 @@ const Layout = ({ title, children }: Props) => {
       //     </Aside>
       //   </MediaQuery>
       // }
-      footer={
-        <Footer height={60} p="md">
-          Made with ❤️ by{' '}
-          <Anchor href="https://cwf.tayles.co.uk">Clockwork Fish</Anchor>
-        </Footer>
-      }
+      // footer={
+      //   <Footer height={60} p="md">
+      //     Made with ❤️ by{' '}
+      //     <Anchor href="https://cwf.tayles.co.uk">Clockwork Fish</Anchor>
+      //   </Footer>
+      // }
       header={
         <Header height={{ base: 50, md: 70 }} p="md">
           <div
@@ -71,8 +74,16 @@ const Layout = ({ title, children }: Props) => {
               />
             </MediaQuery>
 
-            <Title order={1}>Schema Tools</Title>
-            <ThemeToggle />
+            <div className="flex flex-1 items-center justify-between gap-8">
+              <Title order={1} className="flex-1">
+                Schema Tools
+              </Title>
+              <Group>
+                <Button>About</Button>
+                <Button>Source</Button>
+              </Group>
+              <ThemeToggle />
+            </div>
           </div>
         </Header>
       }

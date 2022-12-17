@@ -7,7 +7,6 @@ import Panel from './Panel';
 import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
-import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyToClipboardButton';
 import type { WorkerRequest } from '@/workers/worker-thread';
 import FormatButton from './FormatButton';
@@ -88,7 +87,6 @@ const DataPanel = () => {
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
           <FileUploadInput onFileLoad={setFile} />
           <CopyButton thing="data" text={rawData} />
-          <ErrorCountBadge count={errors?.length} />
           <ValidLabel valid={isParseable && isValid} />
         </div>
         <div className="flex-1">

@@ -3,6 +3,7 @@ import { IconAlertCircle, IconChevronUp } from '@tabler/icons';
 
 import ErrorCountBadge from './ErrorCountBadge';
 import type { ErrorInstance } from '@/utils/model';
+import PrettyPrintJson from './PrettyPrintJson';
 
 interface Props {
   errors: ErrorInstance[];
@@ -28,10 +29,11 @@ const ProblemsPanel = ({ errors }: Props) => {
               <Alert
                 key={error.message}
                 icon={<IconAlertCircle size={16} />}
-                title="Bummer!"
+                title={error.keyword}
                 color="red"
               >
-                {error.message}
+                <div className="whitespace-pre">{error.message}</div>
+                <PrettyPrintJson data={error} />
               </Alert>
             ))}
           </Stack>
