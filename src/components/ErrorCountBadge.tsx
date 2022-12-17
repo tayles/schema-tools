@@ -1,16 +1,22 @@
+import { Badge } from '@mantine/core';
+
 interface Props {
   count: number;
 }
 
 const ErrorCountBadge = ({ count }: Props) => {
   if (count < 1) {
-    return null;
+    return (
+      <Badge color="gray" radius="sm">
+        {count}
+      </Badge>
+    );
   }
 
   return (
-    <span className="inline-block whitespace-nowrap rounded bg-red-600 py-1 px-2.5 text-center align-baseline text-xs font-bold leading-none text-white">
+    <Badge color="red" radius="sm" variant="filled">
       {count}
-    </span>
+    </Badge>
   );
 };
 
