@@ -12,5 +12,9 @@
 }
 
 body {
-  @apply text-white selection:bg-purple-500 selection:text-white;
+  @apply selection:bg-purple-500 selection:text-white;
+}
+
+main {
+  display: flex;
 }

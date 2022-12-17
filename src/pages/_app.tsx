@@ -7,7 +7,6 @@ import '@/styles/globals.css';
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <MantineProvider
-      withGlobalStyles
       theme={{
         colorScheme: 'light',
       }}
