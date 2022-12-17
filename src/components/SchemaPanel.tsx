@@ -7,22 +7,22 @@ import Panel from './Panel';
 import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
-import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyToClipboardButton';
 import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
 import { SegmentedControl } from '@mantine/core';
 import FormatButton from './FormatButton';
 import { IconDice5 } from '@tabler/icons';
 import IconButton from './IconButton';
+import ProblemsPanel from './ProblemsPanel';
 
 const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
   const isParseable = useSchemaStore((state) => state.schemaParseable);
   const isValid = useSchemaStore((state) => state.schemaValid);
   const isFormatted = useSchemaStore((state) => state.schemaFormatted);
+  const errors = useSchemaStore((state) => state.schemaErrors);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
   const setRawData = useSchemaStore((state) => state.setRawData);
-  const schemaErrors = useSchemaStore((state) => state.schemaErrors);
   const setWorkerRef = useSchemaStore((state) => state.setWorkerRef);
   const gotWorkerMessage = useSchemaStore((state) => state.gotWorkerMessage);
 
@@ -126,7 +126,6 @@ const SchemaPanel = () => {
           />
           <FileUploadInput onFileLoad={setFile} />
           <CopyButton thing="schema" text={rawSchema} />
-          <ErrorCountBadge count={schemaErrors?.length} />
           <ValidLabel valid={isParseable && isValid} />
         </div>
         <div className="flex-1">
@@ -136,6 +135,8 @@ const SchemaPanel = () => {
             onChange={setRawSchema}
           />
         </div>
+
+        <ProblemsPanel errors={errors} />
       </div>
     </Panel>
   );

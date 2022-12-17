@@ -13,13 +13,14 @@ import type { WorkerRequest } from '@/workers/worker-thread';
 import FormatButton from './FormatButton';
 import IconButton from './IconButton';
 import { IconMathSymbols } from '@tabler/icons';
+import ProblemsPanel from './ProblemsPanel';
 
 const DataPanel = () => {
   const isParseable = useSchemaStore((state) => state.dataParseable);
   const isValid = useSchemaStore((state) => state.dataValid);
   const isFormatted = useSchemaStore((state) => state.dataFormatted);
   const rawData = useSchemaStore((state) => state.rawData);
-  const dataErrors = useSchemaStore((state) => state.dataErrors);
+  const errors = useSchemaStore((state) => state.dataErrors);
   const setRawData = useSchemaStore((state) => state.setRawData);
   const workerRef = useSchemaStore((state) => state.workerRef);
 
@@ -87,7 +88,7 @@ const DataPanel = () => {
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
           <FileUploadInput onFileLoad={setFile} />
           <CopyButton thing="data" text={rawData} />
-          <ErrorCountBadge count={dataErrors?.length} />
+          <ErrorCountBadge count={errors?.length} />
           <ValidLabel valid={isParseable && isValid} />
         </div>
         <div className="flex-1">
@@ -97,6 +98,8 @@ const DataPanel = () => {
             onChange={setRawData}
           />
         </div>
+
+        <ProblemsPanel errors={errors} />
       </div>
     </Panel>
   );
