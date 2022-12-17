@@ -1,17 +1,15 @@
 import {
   Anchor,
   AppShell,
-  Aside,
   Burger,
   Footer,
   Header,
   MediaQuery,
-  Navbar,
-  Text,
   Title,
   useMantineTheme,
 } from '@mantine/core';
 
+import ThemeToggle from './ThemeToggle';
 import { useState } from 'react';
 
 interface Props {
@@ -74,6 +72,7 @@ const Layout = ({ title, children }: Props) => {
             </MediaQuery>
 
             <Title order={1}>Schema Tools</Title>
+            <ThemeToggle />
           </div>
         </Header>
       }

@@ -1,18 +1,31 @@
 import { type AppType } from 'next/app';
-import { MantineProvider } from '@mantine/core';
-
+import { useState } from 'react';
+import {
+  MantineProvider,
+  ColorSchemeProvider,
+  type ColorScheme,
+} from '@mantine/core';
 import { trpc } from '@/utils/trpc';
 import '@/styles/globals.css';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
   return (
-    <MantineProvider
-      theme={{
-        colorScheme: 'light',
-      }}
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
     >
-      <Component {...pageProps} />
-    </MantineProvider>
+      <MantineProvider
+        theme={{
+          colorScheme: 'light',
+        }}
+      >
+        <Component {...pageProps} />
+      </MantineProvider>
+    </ColorSchemeProvider>
   );
 };
 
