@@ -9,7 +9,7 @@ import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
-import CopyButton from './CopyButton';
+import CopyButton from './CopyToClipboardButton';
 import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
 import { SegmentedControl } from '@mantine/core';
 
@@ -125,7 +125,7 @@ const SchemaPanel = () => {
           >
             Gen Data
           </Button>
-          <CopyButton text={rawSchema} />
+          <CopyButton thing="schema" text={rawSchema} />
           <ErrorCountBadge count={schemaErrors?.length} />
           <ValidLabel valid={isParseable && isValid} />
         </div>

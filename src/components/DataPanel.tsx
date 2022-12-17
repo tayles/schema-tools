@@ -9,7 +9,7 @@ import { useSchemaStore } from '@/store/state';
 import Button from './Button';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
-import CopyButton from './CopyButton';
+import CopyButton from './CopyToClipboardButton';
 import type { WorkerRequest } from '@/workers/worker-thread';
 
 const DataPanel = () => {
@@ -83,7 +83,7 @@ const DataPanel = () => {
           <Button disabled={isFormatted} onClick={handleFormat}>
             Format {isFormatted ? '✅' : '❌'}
           </Button>
-          <CopyButton text={rawData} />
+          <CopyButton thing="data" text={rawData} />
           <ErrorCountBadge count={dataErrors?.length} />
           <ValidLabel valid={isParseable && isValid} />
         </div>
