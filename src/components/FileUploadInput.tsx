@@ -1,5 +1,5 @@
-import { ActionIcon, FileButton, Tooltip } from '@mantine/core';
-
+import { FileButton } from '@mantine/core';
+import IconButton from './IconButton';
 import { IconUpload } from '@tabler/icons';
 
 interface Props {
@@ -13,11 +13,10 @@ const FileUploadInput = ({ onFileLoad }: Props) => {
       accept="application/json,text/yaml"
     >
       {(props) => (
-        <Tooltip label="Upload a file" withArrow position="top">
-          <ActionIcon variant="outline" {...props}>
-            <IconUpload size={16} />
-          </ActionIcon>
-        </Tooltip>
+        <IconButton
+          tooltip="Upload a file"
+          icon={<IconUpload size={16} {...props} />}
+        />
       )}
     </FileButton>
   );

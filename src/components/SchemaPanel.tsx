@@ -1,7 +1,6 @@
 import { getFileContents, getFileExtension } from '@/utils/file';
 import { useEffect, useRef, useState } from 'react';
 
-import { Button } from '@mantine/core';
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
@@ -13,6 +12,8 @@ import CopyButton from './CopyToClipboardButton';
 import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
 import { SegmentedControl } from '@mantine/core';
 import FormatButton from './FormatButton';
+import { IconDice5 } from '@tabler/icons';
+import IconButton from './IconButton';
 
 const SchemaPanel = () => {
   const rawSchema = useSchemaStore((state) => state.rawSchema);
@@ -118,13 +119,11 @@ const SchemaPanel = () => {
             }
           />
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
-          <Button
-            compact
+          <IconButton
+            tooltip="Generate data"
             onClick={handleDeriveData}
-            disabled={!isParseable || !isValid}
-          >
-            Gen Data
-          </Button>
+            icon={<IconDice5 size={16} />}
+          />
           <FileUploadInput onFileLoad={setFile} />
           <CopyButton thing="schema" text={rawSchema} />
           <ErrorCountBadge count={schemaErrors?.length} />

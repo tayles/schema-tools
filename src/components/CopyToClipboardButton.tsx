@@ -21,6 +21,7 @@ const CopyToClipboardButton = ({ thing, text }: Props) => {
             variant="outline"
             color={copied ? 'teal' : 'gray'}
             onClick={copy}
+            disabled={!text}
           >
             {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
           </ActionIcon>

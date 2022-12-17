@@ -6,12 +6,13 @@ import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
 import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
-import { Button } from '@mantine/core';
 import ValidLabel from './ValidLabel';
 import ErrorCountBadge from './ErrorCountBadge';
 import CopyButton from './CopyToClipboardButton';
 import type { WorkerRequest } from '@/workers/worker-thread';
 import FormatButton from './FormatButton';
+import IconButton from './IconButton';
+import { IconMathSymbols } from '@tabler/icons';
 
 const DataPanel = () => {
   const isParseable = useSchemaStore((state) => state.dataParseable);
@@ -78,9 +79,11 @@ const DataPanel = () => {
     <Panel title="Data">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
-          <Button compact disabled={!isParseable} onClick={handleDeriveSchema}>
-            Derive Schema
-          </Button>
+          <IconButton
+            tooltip="Derive schema from data"
+            onClick={handleDeriveSchema}
+            icon={<IconMathSymbols size={16} />}
+          />
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
           <FileUploadInput onFileLoad={setFile} />
           <CopyButton thing="data" text={rawData} />
