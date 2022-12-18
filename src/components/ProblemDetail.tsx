@@ -14,6 +14,7 @@ const ProblemDetail = ({ error }: Props) => {
       icon={<IconAlertCircle size={16} />}
       title={error.keyword}
       color="red"
+      sx={{ userSelect: 'text' }}
     >
       <div className="whitespace-pre-wrap">{error.message}</div>
       <PrettyPrintJson data={error} />

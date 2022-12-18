@@ -12,11 +12,10 @@ interface Props {
 }
 
 const ProblemsPanel = ({ errors }: Props) => {
-  const hasErrors = errors.length > 0;
-
   const [opened, handlers] = useDisclosure(true);
   const [manuallyClosed, setManuallyClosed] = useState(false);
 
+  const hasErrors = errors.length > 0;
   const isOpen = hasErrors && (!manuallyClosed || opened);
 
   const handleClick = () => {
@@ -49,8 +48,8 @@ const ProblemsPanel = ({ errors }: Props) => {
         onChange={handleChange}
         sx={{ marginBottom: -12, borderTopWidth: 1 }}
       >
-        <Accordion.Item onClick={handleClick} value="problems">
-          <Accordion.Control disabled={!hasErrors}>
+        <Accordion.Item value="problems">
+          <Accordion.Control disabled={!hasErrors} onClick={handleClick}>
             <Group>
               Problems
               <ProblemCountBadge count={errors?.length} />
