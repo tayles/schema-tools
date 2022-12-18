@@ -21,7 +21,9 @@ import {
   IconTransform,
 } from '@tabler/icons';
 
+import Link from 'next/link';
 import ThemeToggle from './ThemeToggle';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 interface Props {
@@ -32,7 +34,7 @@ interface Props {
 const Layout = ({ children }: Props) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
-
+  const { pathname } = useRouter();
   return (
     <AppShell
       styles={{
@@ -62,23 +64,46 @@ const Layout = ({ children }: Props) => {
               <NavLink
                 label="JSON Schema Validator"
                 description="Validate data against a schema"
+                component={Link}
+                href="/"
+                active={pathname === '/'}
                 icon={<IconBraces />}
-                active
-              />
-              <NavLink
-                label="JSON Schema Formatter"
-                description="Format and sort a schema"
-                icon={<IconIndentIncrease />}
               />
               <NavLink
                 label="JSON <> YAML"
                 description="Convert between JSON and YAML"
+                component={Link}
+                href="/yaml-to-json"
+                active={pathname === '/yaml-to-json'}
                 icon={<IconTransform />}
+              />
+              <NavLink
+                label="JSON Schema Formatter"
+                description="Format and sort a schema"
+                component={Link}
+                href="/json-schema-format"
+                icon={<IconIndentIncrease />}
               />
               <NavLink
                 label="API Formatter"
                 description="Format and sort an OpenAPI or AsyncAPI schema"
+                component={Link}
+                href="/openapi-format"
                 icon={<IconApiApp />}
+              />
+              <NavLink
+                label="JSON Formatter"
+                description="Format JSON files"
+                component={Link}
+                href="/json-format"
+                icon={<IconIndentIncrease />}
+              />
+              <NavLink
+                label="YAML Formatter"
+                description="Format YAML files"
+                component={Link}
+                href="/yaml-format"
+                icon={<IconIndentIncrease />}
               />
             </ScrollArea>
           </Navbar.Section>
@@ -87,9 +112,17 @@ const Layout = ({ children }: Props) => {
               <Divider my="sm" />
               <Group spacing="xs">
                 <span>Made with</span>
-                <IconHeart />
+                <IconHeart color="red" />
                 <span>by</span>
-                <Anchor href="https://cwf.tayles.co.uk">Clockwork Fish</Anchor>
+                <Anchor
+                  component={Link}
+                  variant="gradient"
+                  href="https://cwf.tayles.co.uk"
+                  gradient={{ from: '#ffe460', to: '#ff7519', deg: 90 }}
+                  fw={700}
+                >
+                  Clockwork Fish
+                </Anchor>
               </Group>
             </Navbar.Section>
           </MediaQuery>

@@ -1,6 +1,4 @@
 import { Card, useMantineColorScheme } from '@mantine/core';
-import type { WorkerRequest, WorkerResult } from '@/workers/worker-thread';
-import { useEffect, useRef } from 'react';
 
 import CodeEditor from './CodeEditor';
 import CopyButton from './CopyToClipboardButton';
@@ -8,60 +6,41 @@ import FormatButton from './FormatButton';
 import Panel from './Panel';
 import ProblemsPanel from './ProblemsPanel';
 import ValidLabel from './ValidLabel';
+import type { WorkerRequest } from '@/workers/worker-thread';
+import { useEffect } from 'react';
 import { useSchemaStore } from '@/store/state';
 
 const JsonPanel = () => {
   const { colorScheme } = useMantineColorScheme();
-  const rawSchema = useSchemaStore((state) => state.rawSchema);
+  const rawData = useSchemaStore((state) => state.rawData);
   const isParseable = useSchemaStore((state) => state.schemaParseable);
   const isValid = useSchemaStore((state) => state.schemaValid);
   const isFormatted = useSchemaStore((state) => state.schemaFormatted);
   const errors = useSchemaStore((state) => state.schemaErrors);
-
-  const setRawSchema = useSchemaStore((state) => state.setRawSchema);
+  const workerRef = useSchemaStore((state) => state.workerRef);
   const setRawData = useSchemaStore((state) => state.setRawData);
-  const setWorkerRef = useSchemaStore((state) => state.setWorkerRef);
-  const gotWorkerMessage = useSchemaStore((state) => state.gotWorkerMessage);
-
-  const workerRef = useRef<Worker>();
-  setWorkerRef(workerRef);
 
   const language = 'json';
-
-  // setup communication with worker thread
-  useEffect(() => {
-    workerRef.current = new Worker(
-      new URL('../workers/worker-thread.ts', import.meta.url),
-    );
-    workerRef.current.onmessage = (event: MessageEvent<WorkerResult>) => {
-      const result = event.data;
-      console.log(':: UI Thread IN', result);
-      gotWorkerMessage(result);
-    };
-    return () => {
-      workerRef.current?.terminate();
-    };
-  }, [workerRef, setRawSchema, setRawData, gotWorkerMessage]);
 
   useEffect(() => {
     sendMessageToWorker({
       command: 'input-change',
-      thing: 'schema',
+      thing: 'data',
       language,
-      input: rawSchema,
+      input: rawData,
     });
-  }, [language, rawSchema]);
+  }, [language, rawData]);
 
   const handleFormat = () => {
     sendMessageToWorker({
       command: 'format',
-      thing: 'schema',
+      thing: 'data',
       language,
     });
   };
 
   function sendMessageToWorker(request: WorkerRequest) {
-    workerRef.current?.postMessage(request);
+    workerRef?.current?.postMessage(request);
   }
 
   return (
@@ -72,14 +51,14 @@ const JsonPanel = () => {
           <ValidLabel valid={isParseable && isValid} />
           <div className="flex-1"></div>
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
-          <CopyButton thing="schema" text={rawSchema} />
+          <CopyButton thing="schema" text={rawData} />
         </div>
 
         <Card.Section sx={{ flex: 1, display: 'flex' }}>
           <CodeEditor
             language={language}
-            code={rawSchema}
-            onChange={setRawSchema}
+            code={rawData}
+            onChange={setRawData}
             theme={colorScheme === 'dark' ? 'vs-dark' : 'light'}
           />
         </Card.Section>

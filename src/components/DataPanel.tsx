@@ -21,8 +21,8 @@ const DataPanel = () => {
   const isFormatted = useSchemaStore((state) => state.dataFormatted);
   const rawData = useSchemaStore((state) => state.rawData);
   const errors = useSchemaStore((state) => state.dataErrors);
-  const setRawData = useSchemaStore((state) => state.setRawData);
   const workerRef = useSchemaStore((state) => state.workerRef);
+  const setRawData = useSchemaStore((state) => state.setRawData);
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');

@@ -1,5 +1,5 @@
 import { getFileContents, getFileExtension } from '@/utils/file';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
@@ -8,7 +8,7 @@ import { type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
 import CopyButton from './CopyToClipboardButton';
-import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
+import type { WorkerRequest } from '@/workers/worker-thread';
 import { Card, SegmentedControl, useMantineColorScheme } from '@mantine/core';
 import FormatButton from './FormatButton';
 import { IconDice5 } from '@tabler/icons';
@@ -17,21 +17,17 @@ import ProblemsPanel from './ProblemsPanel';
 
 const SchemaPanel = () => {
   const { colorScheme } = useMantineColorScheme();
+
   const rawSchema = useSchemaStore((state) => state.rawSchema);
   const isParseable = useSchemaStore((state) => state.schemaParseable);
   const isValid = useSchemaStore((state) => state.schemaValid);
   const isFormatted = useSchemaStore((state) => state.schemaFormatted);
   const errors = useSchemaStore((state) => state.schemaErrors);
+  const workerRef = useSchemaStore((state) => state.workerRef);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
-  const setRawData = useSchemaStore((state) => state.setRawData);
-  const setWorkerRef = useSchemaStore((state) => state.setWorkerRef);
-  const gotWorkerMessage = useSchemaStore((state) => state.gotWorkerMessage);
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
-
-  const workerRef = useRef<Worker>();
-  setWorkerRef(workerRef);
 
   useEffect(() => {
     if (file) {
@@ -53,21 +49,6 @@ const SchemaPanel = () => {
         .catch(console.error);
     }
   }, [file, setRawSchema]);
-
-  // setup communication with worker thread
-  useEffect(() => {
-    workerRef.current = new Worker(
-      new URL('../workers/worker-thread.ts', import.meta.url),
-    );
-    workerRef.current.onmessage = (event: MessageEvent<WorkerResult>) => {
-      const result = event.data;
-      console.log(':: UI Thread IN', result);
-      gotWorkerMessage(result);
-    };
-    return () => {
-      workerRef.current?.terminate();
-    };
-  }, [workerRef, setRawSchema, setRawData, gotWorkerMessage]);
 
   useEffect(() => {
     sendMessageToWorker({
@@ -102,7 +83,7 @@ const SchemaPanel = () => {
   };
 
   function sendMessageToWorker(request: WorkerRequest) {
-    workerRef.current?.postMessage(request);
+    workerRef?.current?.postMessage(request);
   }
 
   return (

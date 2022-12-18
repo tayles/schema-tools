@@ -1,6 +1,4 @@
 import { Card, useMantineColorScheme } from '@mantine/core';
-import type { WorkerRequest, WorkerResult } from '@/workers/worker-thread';
-import { useEffect, useRef } from 'react';
 
 import CodeEditor from './CodeEditor';
 import CopyButton from './CopyToClipboardButton';
@@ -8,6 +6,8 @@ import FormatButton from './FormatButton';
 import Panel from './Panel';
 import ProblemsPanel from './ProblemsPanel';
 import ValidLabel from './ValidLabel';
+import type { WorkerRequest } from '@/workers/worker-thread';
+import { useEffect } from 'react';
 import { useSchemaStore } from '@/store/state';
 
 const YamlPanel = () => {
@@ -17,31 +17,10 @@ const YamlPanel = () => {
   const isValid = useSchemaStore((state) => state.schemaValid);
   const isFormatted = useSchemaStore((state) => state.schemaFormatted);
   const errors = useSchemaStore((state) => state.schemaErrors);
-
+  const workerRef = useSchemaStore((state) => state.workerRef);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
-  const setRawData = useSchemaStore((state) => state.setRawData);
-  const setWorkerRef = useSchemaStore((state) => state.setWorkerRef);
-  const gotWorkerMessage = useSchemaStore((state) => state.gotWorkerMessage);
-
-  const workerRef = useRef<Worker>();
-  setWorkerRef(workerRef);
 
   const language = 'yaml';
-
-  // setup communication with worker thread
-  useEffect(() => {
-    workerRef.current = new Worker(
-      new URL('../workers/worker-thread.ts', import.meta.url),
-    );
-    workerRef.current.onmessage = (event: MessageEvent<WorkerResult>) => {
-      const result = event.data;
-      console.log(':: UI Thread IN', result);
-      gotWorkerMessage(result);
-    };
-    return () => {
-      workerRef.current?.terminate();
-    };
-  }, [workerRef, setRawSchema, setRawData, gotWorkerMessage]);
 
   useEffect(() => {
     sendMessageToWorker({
@@ -61,7 +40,7 @@ const YamlPanel = () => {
   };
 
   function sendMessageToWorker(request: WorkerRequest) {
-    workerRef.current?.postMessage(request);
+    workerRef?.current?.postMessage(request);
   }
 
   return (

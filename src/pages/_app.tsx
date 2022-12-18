@@ -7,6 +7,7 @@ import {
 } from '@mantine/core';
 import { trpc } from '@/utils/trpc';
 import '@/styles/globals.css';
+import WorkerManager from '@/components/WorkerManager';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
@@ -20,6 +21,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     >
       <MantineProvider withGlobalStyles theme={{ colorScheme }}>
         <Component {...pageProps} />
+        <WorkerManager />
       </MantineProvider>
     </ColorSchemeProvider>
   );
