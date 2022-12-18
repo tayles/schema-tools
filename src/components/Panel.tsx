@@ -1,11 +1,10 @@
 import { Card } from '@mantine/core';
 
 interface Props {
-  title: string;
   children: React.ReactNode;
 }
 
-const Panel = ({ title, children }: Props) => {
+const Panel = ({ children }: Props) => {
   return (
     <Card
       shadow="sm"

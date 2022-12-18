@@ -34,16 +34,23 @@ const ProblemsPanel = ({ errors }: Props) => {
     <Card.Section>
       <Accordion
         chevron={<IconChevronUp size={16} />}
+        styles={{
+          content: {
+            padding: '0 12px 12px 12px',
+            overflow: 'scroll',
+            maxHeight: '50vh',
+          },
+          control: {
+            paddingTop: 8,
+            paddingBottom: 8,
+          },
+        }}
         value={isOpen ? 'problems' : null}
         onChange={handleChange}
-        sx={{ marginBottom: '-12px' }}
+        sx={{ marginBottom: -12, borderTopWidth: 1 }}
       >
-        <Accordion.Item
-          onClick={handleClick}
-          value="problems"
-          sx={{ borderBottom: 'none' }}
-        >
-          <Accordion.Control color="red" disabled={!hasErrors}>
+        <Accordion.Item onClick={handleClick} value="problems">
+          <Accordion.Control disabled={!hasErrors}>
             <Group>
               Problems
               <ProblemCountBadge count={errors?.length} />

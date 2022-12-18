@@ -6,7 +6,9 @@ interface Props {
 const PrettyPrintJson = ({ data }: Props) => {
   return (
     <div>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <pre className="whitespace-pre-wrap text-xs">
+        {JSON.stringify(data, null, 2)}
+      </pre>
     </div>
   );
 };

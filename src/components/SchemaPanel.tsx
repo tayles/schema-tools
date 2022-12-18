@@ -9,7 +9,7 @@ import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
 import CopyButton from './CopyToClipboardButton';
 import type { WorkerResult, WorkerRequest } from '@/workers/worker-thread';
-import { SegmentedControl, useMantineColorScheme } from '@mantine/core';
+import { Card, SegmentedControl, useMantineColorScheme } from '@mantine/core';
 import FormatButton from './FormatButton';
 import { IconDice5 } from '@tabler/icons';
 import IconButton from './IconButton';
@@ -106,7 +106,7 @@ const SchemaPanel = () => {
   }
 
   return (
-    <Panel title="Schema">
+    <Panel>
       <div className="flex flex-1 flex-col">
         <div className="mb-2 flex items-center gap-2">
           <h2>Schema</h2>
@@ -132,12 +132,14 @@ const SchemaPanel = () => {
           <CopyButton thing="schema" text={rawSchema} />
         </div>
 
-        <CodeEditor
-          language={language}
-          code={rawSchema}
-          onChange={setRawSchema}
-          theme={colorScheme === 'dark' ? 'vs-dark' : 'light'}
-        />
+        <Card.Section sx={{ flex: 1, display: 'flex' }}>
+          <CodeEditor
+            language={language}
+            code={rawSchema}
+            onChange={setRawSchema}
+            theme={colorScheme === 'dark' ? 'vs-dark' : 'light'}
+          />
+        </Card.Section>
 
         <ProblemsPanel errors={errors} />
       </div>

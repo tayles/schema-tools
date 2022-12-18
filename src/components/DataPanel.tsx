@@ -13,6 +13,7 @@ import FormatButton from './FormatButton';
 import IconButton from './IconButton';
 import { IconMathSymbols } from '@tabler/icons';
 import ProblemsPanel from './ProblemsPanel';
+import { Card } from '@mantine/core';
 
 const DataPanel = () => {
   const isParseable = useSchemaStore((state) => state.dataParseable);
@@ -77,8 +78,8 @@ const DataPanel = () => {
 
   return (
     <Panel title="Data">
-      <div className="flex flex-1 flex-col gap-2">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-1 flex-col">
+        <div className="mb-2 flex items-center gap-2">
           <h2>Data</h2>
           <ValidLabel valid={isParseable && isValid} />
           <div className="flex-1"></div>
@@ -92,7 +93,13 @@ const DataPanel = () => {
           <CopyButton thing="data" text={rawData} />
         </div>
 
-        <CodeEditor language={language} code={rawData} onChange={setRawData} />
+        <Card.Section sx={{ flex: 1, display: 'flex' }}>
+          <CodeEditor
+            language={language}
+            code={rawData}
+            onChange={setRawData}
+          />
+        </Card.Section>
 
         <ProblemsPanel errors={errors} />
       </div>

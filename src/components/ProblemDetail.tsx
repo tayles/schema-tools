@@ -15,7 +15,7 @@ const ProblemDetail = ({ error }: Props) => {
       title={error.keyword}
       color="red"
     >
-      <div className="whitespace-pre">{error.message}</div>
+      <div className="whitespace-pre-wrap">{error.message}</div>
       <PrettyPrintJson data={error} />
     </Alert>
   );
