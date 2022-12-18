@@ -1,13 +1,25 @@
 import {
+  Anchor,
   AppShell,
   Burger,
   Button,
+  Divider,
   Group,
   Header,
   MediaQuery,
+  NavLink,
+  Navbar,
+  ScrollArea,
   Title,
   useMantineTheme,
 } from '@mantine/core';
+import {
+  IconApiApp,
+  IconBraces,
+  IconHeart,
+  IconIndentIncrease,
+  IconTransform,
+} from '@tabler/icons';
 
 import ThemeToggle from './ThemeToggle';
 import { useState } from 'react';
@@ -17,7 +29,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const Layout = ({ title, children }: Props) => {
+const Layout = ({ children }: Props) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
 
@@ -25,24 +37,64 @@ const Layout = ({ title, children }: Props) => {
     <AppShell
       styles={{
         main: {
+          display: 'flex',
           background:
             theme.colorScheme === 'dark'
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
         },
       }}
-      navbarOffsetBreakpoint="sm"
+      navbarOffsetBreakpoint="xl"
       asideOffsetBreakpoint="sm"
-      // navbar={
-      //   <Navbar
-      //     p="md"
-      //     hiddenBreakpoint="sm"
-      //     hidden={!opened}
-      //     width={{ sm: 200, lg: 300 }}
-      //   >
-      //     <Text>Application navbar</Text>
-      //   </Navbar>
-      // }
+      navbar={
+        <Navbar
+          p="md"
+          hiddenBreakpoint="xl"
+          hidden={!opened}
+          width={{ sm: 300 }}
+        >
+          <Navbar.Section>
+            <p>Tools for APIs, JSON Schema and more</p>
+            <Divider my="sm" />
+          </Navbar.Section>
+          <Navbar.Section grow mt="md">
+            <ScrollArea>
+              <NavLink
+                label="JSON Schema Validator"
+                description="Validate data against a schema"
+                icon={<IconBraces />}
+                active
+              />
+              <NavLink
+                label="JSON Schema Formatter"
+                description="Format and sort a schema"
+                icon={<IconIndentIncrease />}
+              />
+              <NavLink
+                label="JSON <> YAML"
+                description="Convert between JSON and YAML"
+                icon={<IconTransform />}
+              />
+              <NavLink
+                label="API Formatter"
+                description="Format and sort an OpenAPI or AsyncAPI schema"
+                icon={<IconApiApp />}
+              />
+            </ScrollArea>
+          </Navbar.Section>
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <Navbar.Section>
+              <Divider my="sm" />
+              <Group spacing="xs">
+                <span>Made with</span>
+                <IconHeart />
+                <span>by</span>
+                <Anchor href="https://cwf.tayles.co.uk">Clockwork Fish</Anchor>
+              </Group>
+            </Navbar.Section>
+          </MediaQuery>
+        </Navbar>
+      }
       // aside={
       //   <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
       //     <Aside p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
@@ -61,15 +113,15 @@ const Layout = ({ title, children }: Props) => {
           <div
             style={{ display: 'flex', alignItems: 'center', height: '100%' }}
           >
-            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-              <Burger
-                opened={opened}
-                onClick={() => setOpened((o) => !o)}
-                size="sm"
-                color={theme.colors.gray[6]}
-                mr="xl"
-              />
-            </MediaQuery>
+            {/* <MediaQuery largerThan="sm" styles={{ display: 'none' }}> */}
+            <Burger
+              opened={opened}
+              onClick={() => setOpened((o) => !o)}
+              size="sm"
+              color={theme.colors.gray[6]}
+              mr="xl"
+            />
+            {/* </MediaQuery> */}
 
             <div className="flex flex-1 items-center justify-between gap-8">
               <svg
@@ -87,11 +139,14 @@ const Layout = ({ title, children }: Props) => {
               <Title order={1} className="flex-1">
                 Schema Tools
               </Title>
-              <Group>
-                <Button>About</Button>
-                <Button>Source</Button>
-              </Group>
-              <ThemeToggle />
+
+              <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+                <Group>
+                  <Button>About</Button>
+                  <Button>Source</Button>
+                  <ThemeToggle />
+                </Group>
+              </MediaQuery>
             </div>
           </div>
         </Header>

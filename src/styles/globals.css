@@ -15,7 +15,3 @@ body {
   @apply selection:bg-purple-500 selection:text-white;
   user-select: none;
 }
-
-main {
-  display: flex;
-}
