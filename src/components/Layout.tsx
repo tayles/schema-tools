@@ -1,5 +1,6 @@
 import { AppShell, useMantineTheme } from '@mantine/core';
 
+import Head from 'next/head';
 import HeaderBar from './HeaderBar';
 import NavBar from './NavBar';
 import { useState } from 'react';
@@ -9,7 +10,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const Layout = ({ children }: Props) => {
+const Layout = ({ title, children }: Props) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
@@ -46,6 +47,9 @@ const Layout = ({ children }: Props) => {
       //   </Footer>
       // }
     >
+      <Head>
+        <title>{title}</title>
+      </Head>
       {children}
     </AppShell>
   );

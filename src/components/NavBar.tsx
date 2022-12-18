@@ -22,6 +22,58 @@ interface Props {
   opened: boolean;
 }
 
+interface NavLinkDescriptor {
+  label: string;
+  description: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const navLinks: NavLinkDescriptor[] = [
+  {
+    label: 'JSON Schema Validator',
+    description: 'Validate data against a schema',
+    href: '/',
+    icon: <IconBraces />,
+  },
+  {
+    label: 'YAML <> JSON',
+    description: 'Convert between JSON and YAML',
+    href: '/yaml-to-json',
+    icon: <IconTransform />,
+  },
+  {
+    label: 'JSON Schema Format',
+    description: 'Format and sort a schema',
+    href: '/json-schema-format',
+    icon: <IconIndentIncrease />,
+  },
+  {
+    label: 'API Format',
+    description: 'Format and sort an OpenAPI or AsyncAPI schema',
+    href: '/openapi-format',
+    icon: <IconApiApp />,
+  },
+  {
+    label: 'JSON Format',
+    description: 'Format JSON files',
+    href: '/json-format',
+    icon: <IconIndentIncrease />,
+  },
+  {
+    label: 'YAML Format',
+    description: 'Format YAML files',
+    href: '/yaml-format',
+    icon: <IconIndentIncrease />,
+  },
+  {
+    label: 'JSON Schema to Zod',
+    description: 'Convert a json schema to zod TypeScript types',
+    href: '/json-schema-to-zod',
+    icon: <IconTransform />,
+  },
+];
+
 const NavBar = ({ opened = false }: Props) => {
   const { pathname } = useRouter();
 
@@ -33,50 +85,18 @@ const NavBar = ({ opened = false }: Props) => {
       </Navbar.Section>
       <Navbar.Section grow mt="md">
         <ScrollArea>
-          <NavLink
-            label="JSON Schema Validator"
-            description="Validate data against a schema"
-            component={Link}
-            href="/"
-            active={pathname === '/'}
-            icon={<IconBraces />}
-          />
-          <NavLink
-            label="JSON <> YAML"
-            description="Convert between JSON and YAML"
-            component={Link}
-            href="/yaml-to-json"
-            active={pathname === '/yaml-to-json'}
-            icon={<IconTransform />}
-          />
-          <NavLink
-            label="JSON Schema Formatter"
-            description="Format and sort a schema"
-            component={Link}
-            href="/json-schema-format"
-            icon={<IconIndentIncrease />}
-          />
-          <NavLink
-            label="API Formatter"
-            description="Format and sort an OpenAPI or AsyncAPI schema"
-            component={Link}
-            href="/openapi-format"
-            icon={<IconApiApp />}
-          />
-          <NavLink
-            label="JSON Formatter"
-            description="Format JSON files"
-            component={Link}
-            href="/json-format"
-            icon={<IconIndentIncrease />}
-          />
-          <NavLink
-            label="YAML Formatter"
-            description="Format YAML files"
-            component={Link}
-            href="/yaml-format"
-            icon={<IconIndentIncrease />}
-          />
+          {navLinks.map((l) => (
+            <NavLink
+              component={Link}
+              color="violet"
+              key={l.label}
+              label={l.label}
+              description={l.description}
+              href={l.href}
+              icon={l.icon}
+              active={pathname === l.href}
+            />
+          ))}
         </ScrollArea>
       </Navbar.Section>
       <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
