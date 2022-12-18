@@ -1,9 +1,11 @@
-import { Accordion, Alert, Group, Stack } from '@mantine/core';
-import { IconAlertCircle, IconChevronUp } from '@tabler/icons';
+import { Accordion, Card, Group, Stack } from '@mantine/core';
 
-import ErrorCountBadge from './ErrorCountBadge';
 import type { ErrorInstance } from '@/utils/model';
-import PrettyPrintJson from './PrettyPrintJson';
+import { IconChevronUp } from '@tabler/icons';
+import ProblemCountBadge from './ProblemCountBadge';
+import ProblemDetail from './ProblemDetail';
+import { useDisclosure } from '@mantine/hooks';
+import { useState } from 'react';
 
 interface Props {
   errors: ErrorInstance[];
@@ -11,35 +13,52 @@ interface Props {
 
 const ProblemsPanel = ({ errors }: Props) => {
   const hasErrors = errors.length > 0;
+
+  const [opened, handlers] = useDisclosure(true);
+  const [manuallyClosed, setManuallyClosed] = useState(false);
+
+  const isOpen = hasErrors && (!manuallyClosed || opened);
+
+  const handleClick = () => {
+    handlers.close();
+    if (opened && hasErrors) {
+      setManuallyClosed(true);
+    }
+  };
+
+  const handleChange = () => {
+    handlers.toggle();
+  };
+
   return (
-    <Accordion
-      value={hasErrors ? 'problems' : ''}
-      chevron={<IconChevronUp size={16} />}
-    >
-      <Accordion.Item value="problems">
-        <Accordion.Control color="red" disabled={!hasErrors}>
-          <Group>
-            Problems
-            <ErrorCountBadge count={errors?.length} />
-          </Group>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <Stack>
-            {errors.map((error) => (
-              <Alert
-                key={error.message}
-                icon={<IconAlertCircle size={16} />}
-                title={error.keyword}
-                color="red"
-              >
-                <div className="whitespace-pre">{error.message}</div>
-                <PrettyPrintJson data={error} />
-              </Alert>
-            ))}
-          </Stack>
-        </Accordion.Panel>
-      </Accordion.Item>
-    </Accordion>
+    <Card.Section>
+      <Accordion
+        chevron={<IconChevronUp size={16} />}
+        value={isOpen ? 'problems' : null}
+        onChange={handleChange}
+        sx={{ marginBottom: '-12px' }}
+      >
+        <Accordion.Item
+          onClick={handleClick}
+          value="problems"
+          sx={{ borderBottom: 'none' }}
+        >
+          <Accordion.Control color="red" disabled={!hasErrors}>
+            <Group>
+              Problems
+              <ProblemCountBadge count={errors?.length} />
+            </Group>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Stack>
+              {errors.map((error) => (
+                <ProblemDetail key={error.message} error={error} />
+              ))}
+            </Stack>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </Card.Section>
   );
 };
 

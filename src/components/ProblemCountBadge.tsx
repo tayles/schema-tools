@@ -4,7 +4,7 @@ interface Props {
   count: number;
 }
 
-const ErrorCountBadge = ({ count }: Props) => {
+const ProblemCountBadge = ({ count }: Props) => {
   if (count < 1) {
     return (
       <Badge color="gray" radius="sm">
@@ -20,4 +20,4 @@ const ErrorCountBadge = ({ count }: Props) => {
   );
 };
 
-export default ErrorCountBadge;
+export default ProblemCountBadge;
