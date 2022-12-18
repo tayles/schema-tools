@@ -46,6 +46,8 @@ const JSON_SCHEMA_SORTED_KEYS = [
 
   'examples',
 
+  'required',
+
   'uniqueItems',
   'additionalItems',
   'additionalProperties',
@@ -53,7 +55,6 @@ const JSON_SCHEMA_SORTED_KEYS = [
 
   'contains',
 
-  'required',
   'properties',
   'patternProperties',
   'dependencies',

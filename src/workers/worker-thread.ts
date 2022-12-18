@@ -25,8 +25,11 @@ import {
 } from '@/utils/json-parse-source-map';
 import { sortJsonSchemaKeys } from '@/utils/jsonschema-sort';
 
-const ajv = new Ajv({ allErrors: true, verbose: true, strict: true });
 let validateFn: ValidateFunction<unknown> | null = null;
+
+function createAjvInstance(): Ajv {
+  return new Ajv({ allErrors: true, verbose: true, strict: true });
+}
 
 const store: Record<
   Thing,
@@ -163,6 +166,7 @@ function validateSchema(schema: JSONValue) {
 
   try {
     console.time('validate-schema');
+    const ajv = createAjvInstance();
     const validationResult = validateJsonSchema(schema as JSONSchema, ajv);
     valid = validationResult.ok;
     if (validationResult.ok) {
@@ -186,11 +190,7 @@ function validateData(data: JSONValue) {
   if (validateFn) {
     try {
       console.time('validate-data');
-      const validationResult = validateDataAgainstJsonSchema(
-        data,
-        ajv,
-        validateFn,
-      );
+      const validationResult = validateDataAgainstJsonSchema(data, validateFn);
       valid = validationResult.ok;
       if (!validationResult.ok) {
         errors = decorateErrors(validationResult.errors, store.data.pointers);
@@ -258,10 +258,7 @@ function onInputChange(req: ChangeRequest) {
   }
 
   {
-    const { formatted, formattedValue, errors } = format(
-      obj ? jsonToString(obj) : input,
-      language,
-    );
+    const { formatted, formattedValue, errors } = format(input, language);
     sendMessageToMainThread({
       command: 'formatting-result',
       thing,

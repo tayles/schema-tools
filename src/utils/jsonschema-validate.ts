@@ -42,7 +42,6 @@ export function validateJsonSchema(
 
 export function validateDataAgainstJsonSchema(
   dataObj: JSONValue,
-  ajv: Ajv,
   validateFn: ValidateFunction<unknown>,
 ): DataValidationResult {
   try {
