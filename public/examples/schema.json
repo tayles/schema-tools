@@ -4,6 +4,7 @@
   "title": "Person",
   "type": "object",
   "required": [
+    "lastName",
     "firstName"
   ],
   "additionalProperties": false,

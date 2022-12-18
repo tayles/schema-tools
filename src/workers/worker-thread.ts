@@ -3,6 +3,7 @@ import {
   type JSONSchema,
   type JSONValue,
   jsonToString,
+  isJsonObject,
 } from '@/utils/json-to-string';
 import type { ValidateFunction } from 'ajv';
 import Ajv from 'ajv';
@@ -22,6 +23,7 @@ import {
   type Pointers,
   parseJsonWithSourceMap,
 } from '@/utils/json-parse-source-map';
+import { sortJsonSchemaKeys } from '@/utils/jsonschema-sort';
 
 const ajv = new Ajv({ allErrors: true, verbose: true, strict: true });
 let validateFn: ValidateFunction<unknown> | null = null;
@@ -132,6 +134,7 @@ export type WorkerResult =
 function parse(thing: Thing, input: string, language: SupportedLanguages) {
   let valid = false;
   let obj: JSONValue | null = null;
+  let pointers: Pointers | null = null;
   let errors: ErrorInstance[] = [];
 
   try {
@@ -142,9 +145,8 @@ function parse(thing: Thing, input: string, language: SupportedLanguages) {
     }
 
     const parseResult = parseJsonWithSourceMap(input);
-    console.log(parseResult);
     obj = parseResult?.data;
-    store[thing].pointers = parseResult?.pointers ?? null;
+    pointers = parseResult?.pointers ?? null;
     valid = true;
   } catch (err) {
     // failed to parse
@@ -152,7 +154,7 @@ function parse(thing: Thing, input: string, language: SupportedLanguages) {
   } finally {
     console.timeEnd('parse');
   }
-  return { valid, obj, errors };
+  return { valid, obj, pointers, errors };
 }
 
 function validateSchema(schema: JSONValue) {
@@ -224,7 +226,9 @@ function format(input: string, language: SupportedLanguages) {
 function onInputChange(req: ChangeRequest) {
   const { thing, language, input } = req;
 
-  const { valid, obj, errors } = parse(thing, input, language);
+  const parseResult = parse(thing, input, language);
+  const { valid, pointers, errors } = parseResult;
+  let { obj } = parseResult;
   sendMessageToMainThread({
     command: 'parse-result',
     thing,
@@ -232,7 +236,15 @@ function onInputChange(req: ChangeRequest) {
     errors,
   });
 
+  if (thing === 'schema' && isJsonObject(obj)) {
+    console.time('sort');
+    obj = sortJsonSchemaKeys(obj);
+    console.timeEnd('sort');
+  }
+
+  // TODO: This is nasty - think of a way to persist state in worker thread nicely
   store[thing].obj = obj;
+  store[thing].pointers = pointers;
 
   if (obj) {
     const { valid, errors } =
@@ -246,7 +258,10 @@ function onInputChange(req: ChangeRequest) {
   }
 
   {
-    const { formatted, formattedValue, errors } = format(input, language);
+    const { formatted, formattedValue, errors } = format(
+      obj ? jsonToString(obj) : input,
+      language,
+    );
     sendMessageToMainThread({
       command: 'formatting-result',
       thing,
