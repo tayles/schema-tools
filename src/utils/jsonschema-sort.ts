@@ -14,13 +14,12 @@ const JSON_SCHEMA_SORTED_KEYS = [
   '$id',
   '$schema',
 
-  'type',
-
   'title',
   'description',
 
   '$ref',
 
+  'type',
   'format',
   'default',
 
@@ -44,6 +43,8 @@ const JSON_SCHEMA_SORTED_KEYS = [
   'maximum',
   'exclusiveMaximum',
 
+  'contentMediaType',
+  'contentEncoding',
   'examples',
 
   'required',
@@ -67,9 +68,6 @@ const JSON_SCHEMA_SORTED_KEYS = [
   'anyOf',
   'oneOf',
   'not',
-
-  'contentMediaType',
-  'contentEncoding',
 
   'definitions',
   '$defs',

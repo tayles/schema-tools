@@ -6,12 +6,12 @@ import {
   isJsonObject,
 } from '@/utils/json-to-string';
 import type { ValidateFunction } from 'ajv';
-import Ajv from 'ajv';
 import {
   generateError,
   validateJsonSchema,
   validateDataAgainstJsonSchema,
   decorateErrors,
+  createAjvInstance,
 } from '@/utils/jsonschema-validate';
 import { formatJson, formatYaml } from '@/utils/prettier-format';
 import { jsonToYaml, yamlToJson } from '@/utils/yaml';
@@ -26,10 +26,6 @@ import {
 import { sortJsonSchemaKeys } from '@/utils/jsonschema-sort';
 
 let validateFn: ValidateFunction<unknown> | null = null;
-
-function createAjvInstance(): Ajv {
-  return new Ajv({ allErrors: true, verbose: true, strict: true });
-}
 
 const store: Record<
   Thing,

@@ -1,9 +1,10 @@
 import type { JSONSchema, JSONValue } from './json-to-string';
 import type { SchemaObject, ValidateFunction } from 'ajv';
 
-import type Ajv from 'ajv';
+import Ajv from 'ajv';
 import type { ErrorInstance } from './model';
 import type { Pointers } from './json-parse-source-map';
+import addFormats from 'ajv-formats';
 
 interface JsonSchemaValidationSuccess {
   ok: true;
@@ -81,4 +82,10 @@ export function decorateErrors(
     ...error,
     pointer: pointers?.[error.instancePath ?? '/'],
   }));
+}
+
+export function createAjvInstance(): Ajv {
+  const ajv = new Ajv({ allErrors: true, verbose: true, strict: true });
+  addFormats(ajv);
+  return ajv;
 }
