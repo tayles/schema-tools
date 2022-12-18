@@ -1,5 +1,5 @@
 import { JSONSchemaFaker } from 'json-schema-faker';
-import type { JSONValue } from './json';
+import type { JSONValue } from './json-to-string';
 import toJsonSchema from 'to-json-schema';
 
 export function deriveSchemaFromData(data: JSONValue): JSONValue {

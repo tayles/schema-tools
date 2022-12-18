@@ -3,9 +3,7 @@ import {
   type JSONSchema,
   type JSONValue,
   jsonToString,
-  parseJsonWithSourceMap,
-  type Pointers,
-} from '@/utils/json';
+} from '@/utils/json-to-string';
 import type { ValidateFunction } from 'ajv';
 import Ajv from 'ajv';
 import {
@@ -13,13 +11,17 @@ import {
   validateJsonSchema,
   validateDataAgainstJsonSchema,
   decorateErrors,
-} from '@/utils/validate-json-schema';
+} from '@/utils/jsonschema-validate';
 import { formatJson, formatYaml } from '@/utils/prettier-format';
 import { jsonToYaml, yamlToJson } from '@/utils/yaml';
 import {
   deriveDataFromSchema,
   deriveSchemaFromData,
-} from '@/utils/derive-json-schema';
+} from '@/utils/jsonschema-derive';
+import {
+  type Pointers,
+  parseJsonWithSourceMap,
+} from '@/utils/json-parse-source-map';
 
 const ajv = new Ajv({ allErrors: true, verbose: true, strict: true });
 let validateFn: ValidateFunction<unknown> | null = null;

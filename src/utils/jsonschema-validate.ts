@@ -1,8 +1,9 @@
-import type { JSONSchema, JSONValue, Pointers } from './json';
+import type { JSONSchema, JSONValue } from './json-to-string';
 import type { SchemaObject, ValidateFunction } from 'ajv';
 
 import type Ajv from 'ajv';
 import type { ErrorInstance } from './model';
+import type { Pointers } from './json-parse-source-map';
 
 interface JsonSchemaValidationSuccess {
   ok: true;

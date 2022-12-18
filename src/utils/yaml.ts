@@ -1,6 +1,6 @@
 import { dump, load } from 'js-yaml';
 
-import type { JSONValue } from './json';
+import type { JSONValue } from './json-to-string';
 
 export function jsonToYaml(obj: JSONValue): string {
   return dump(obj, {

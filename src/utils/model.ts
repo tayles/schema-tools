@@ -1,5 +1,5 @@
 import type { ErrorObject } from 'ajv';
-import type { Pointer } from './json';
+import type { Pointer } from './json-parse-source-map';
 
 export const SupportedLanguagesArr = ['json', 'yaml'] as const;
 

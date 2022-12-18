@@ -4,7 +4,7 @@ import type { WorkerResult } from '@/workers/worker-thread';
 import create from 'zustand';
 import exampleDataJson from '../../public/examples/data.json';
 import exampleSchemaJson from '../../public/examples/schema.json';
-import { jsonToString } from '@/utils/json';
+import { jsonToString } from '@/utils/json-to-string';
 
 interface SchemaState {
   schemaVersion: string | null;
