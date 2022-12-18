@@ -77,7 +77,7 @@ const DataPanel = () => {
   }
 
   return (
-    <Panel title="Data">
+    <Panel>
       <div className="flex flex-1 flex-col">
         <div className="mb-2 flex items-center gap-2">
           <h2>Data</h2>
