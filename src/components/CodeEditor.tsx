@@ -48,15 +48,19 @@ const CodeEditor = ({
   }
 
   return (
-    <Editor
-      width="100%"
-      height="100%"
-      options={combinedOptions}
-      language={language}
-      value={code ?? undefined}
-      theme={theme}
-      onChange={handleEditorChange}
-    />
+    <div className="relative flex-1">
+      <div className="absolute inset-0">
+        <Editor
+          width="100%"
+          height="100%"
+          options={combinedOptions}
+          language={language}
+          value={code ?? undefined}
+          theme={theme}
+          onChange={handleEditorChange}
+        />
+      </div>
+    </div>
   );
 };
 

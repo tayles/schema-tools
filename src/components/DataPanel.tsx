@@ -79,6 +79,9 @@ const DataPanel = () => {
     <Panel title="Data">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
+          <h2>Data</h2>
+          <ValidLabel valid={isParseable && isValid} />
+          <div className="flex-1"></div>
           <IconButton
             tooltip="Derive schema from data"
             onClick={handleDeriveSchema}
@@ -87,15 +90,9 @@ const DataPanel = () => {
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
           <FileUploadInput onFileLoad={setFile} />
           <CopyButton thing="data" text={rawData} />
-          <ValidLabel valid={isParseable && isValid} />
         </div>
-        <div className="flex-1">
-          <CodeEditor
-            language={language}
-            code={rawData}
-            onChange={setRawData}
-          />
-        </div>
+
+        <CodeEditor language={language} code={rawData} onChange={setRawData} />
 
         <ProblemsPanel errors={errors} />
       </div>

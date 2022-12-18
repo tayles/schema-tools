@@ -18,11 +18,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       colorScheme={colorScheme}
       toggleColorScheme={toggleColorScheme}
     >
-      <MantineProvider
-        theme={{
-          colorScheme: 'light',
-        }}
-      >
+      <MantineProvider withGlobalStyles theme={{ colorScheme }}>
         <Component {...pageProps} />
       </MantineProvider>
     </ColorSchemeProvider>

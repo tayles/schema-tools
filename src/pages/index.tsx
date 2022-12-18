@@ -12,14 +12,11 @@ const Home: NextPage = () => {
         <title>Schema Tools</title>
       </Head>
 
-      <div className="relative flex-1">
-        <div className="absolute inset-0 flex">
-          <div className="mx-4 flex flex-1 flex-wrap gap-4 text-black">
-            <SchemaPanel />
-            <DataPanel />
-          </div>
-        </div>
+      <div className="flex flex-1 flex-wrap justify-around gap-4 text-black">
+        <SchemaPanel />
+        <DataPanel />
       </div>
+
       <FileDropzone />
     </Layout>
   );
