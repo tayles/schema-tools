@@ -37,7 +37,7 @@ const ProblemsPanel = ({ errors }: Props) => {
           content: {
             padding: '0 12px 12px 12px',
             overflow: 'scroll',
-            maxHeight: '50vh',
+            maxHeight: '40vh',
           },
           control: {
             paddingTop: 8,
