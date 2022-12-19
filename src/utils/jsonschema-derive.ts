@@ -7,6 +7,12 @@ export function deriveSchemaFromData(data: JSONValue): JSONValue {
 }
 
 export function deriveDataFromSchema(schema: JSONValue): JSONValue {
+  JSONSchemaFaker.option({
+    alwaysFakeOptionals: true,
+    fillProperties: false,
+    ignoreMissingRefs: true,
+    useDefaultValue: true,
+  });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return JSONSchemaFaker.generate(schema as any) as any;
 }
