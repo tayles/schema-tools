@@ -103,6 +103,7 @@ const DataPanel = () => {
         <Card.Section sx={{ flex: 1, display: 'flex' }}>
           <CodeEditor
             editorRef={editorRef}
+            modelId="data-panel"
             language={language}
             code={rawData}
             onChange={setRawData}

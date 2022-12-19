@@ -69,7 +69,7 @@ const SchemaPanel = () => {
       language,
       input: rawSchema,
     });
-  }, [language, rawSchema]);
+  }, [rawSchema]);
 
   const handleFormat = () => {
     sendMessageToWorker({
@@ -129,6 +129,7 @@ const SchemaPanel = () => {
         <Card.Section sx={{ flex: 1, display: 'flex' }}>
           <CodeEditor
             editorRef={editorRef}
+            modelId="schema-panel"
             language={language}
             code={rawSchema}
             onChange={setRawSchema}

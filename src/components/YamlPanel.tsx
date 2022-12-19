@@ -64,6 +64,7 @@ const YamlPanel = () => {
         <Card.Section sx={{ flex: 1, display: 'flex' }}>
           <CodeEditor
             editorRef={editorRef}
+            modelId="yaml-panel"
             language={language}
             code={rawSchema}
             onChange={setRawSchema}

@@ -5,6 +5,7 @@ import {
   selectRegion,
   type MonacoInstance,
   loadMonacoInstance,
+  applyJsonSchema,
 } from '@/utils/monaco';
 import { type MutableRefObject, createRef } from 'react';
 
@@ -13,7 +14,7 @@ import type { WorkerResult } from '@/workers/worker-thread';
 import create from 'zustand';
 import exampleDataJson from '../../public/examples/data.json';
 import exampleSchemaJson from '../../public/examples/schema.json';
-import { jsonToString } from '@/utils/json-to-string';
+import { JSONSchema, jsonToString, stringToJson } from '@/utils/json-to-string';
 import type { LineAndColumn } from '@/utils/json-parse-source-map';
 
 interface SchemaState {
@@ -80,7 +81,13 @@ export const useSchemaStore = create<SchemaState>((set, get) => ({
   dataEditorRef:
     createRef<ICodeEditor>() as React.MutableRefObject<ICodeEditor>,
 
-  setRawSchema: (rawSchema: string) => set(() => ({ rawSchema })),
+  setRawSchema: (rawSchema: string) =>
+    set((state) => {
+      const schema = stringToJson(rawSchema) as JSONSchema;
+      applyJsonSchema(state.monacoRef.current, schema, 'data-panel');
+
+      return { rawSchema };
+    }),
   setRawData: (rawData: string) => set(() => ({ rawData })),
 
   setSchemaErrors: (schemaErrors: ErrorInstance[]) =>
@@ -171,18 +178,20 @@ function highlightEditorErrorInstance(
 
   if (error.markerLocation) {
     const start: LineAndColumn = {
-      line: error.markerLocation.startLineNumber,
-      column: error.markerLocation.startColumn,
+      line: error.markerLocation.startLineNumber - 1,
+      column: error.markerLocation.startColumn - 1,
     };
     const end: LineAndColumn = {
-      line: error.markerLocation.endLineNumber,
-      column: error.markerLocation.endColumn,
+      line: error.markerLocation.endLineNumber - 1,
+      column: error.markerLocation.endColumn - 1,
     };
 
     selectRegion(start, end, editor, monaco);
-  } else if (error.pointer) {
+  } else if (error.pointer?.value) {
+    selectRegion(error.pointer.value, error.pointer.valueEnd, editor, monaco);
     // const pos = model.getPositionAt(error.pointer.value.pos);
-    // console.log(pos);
+  } else if (error.pointer?.key) {
+    selectRegion(error.pointer.key, error.pointer.keyEnd, editor, monaco);
   }
   return {};
 }

@@ -1,7 +1,12 @@
 import Editor from '@monaco-editor/react';
 import { type SupportedLanguages } from '@/utils/model';
 import type { MutableRefObject } from 'react';
-import type { ICodeEditor, IMarker, IOptions } from '@/utils/monaco';
+import {
+  type ICodeEditor,
+  type IMarker,
+  type IOptions,
+  generateModelUri,
+} from '@/utils/monaco';
 
 const defaultOptions: IOptions = {
   minimap: {
@@ -23,6 +28,7 @@ const defaultOptions: IOptions = {
 
 interface Props {
   editorRef: MutableRefObject<ICodeEditor>;
+  modelId: string;
   language: SupportedLanguages;
   code: string;
   options?: IOptions;
@@ -34,6 +40,7 @@ interface Props {
 
 const CodeEditor = ({
   editorRef,
+  modelId,
   language = 'json',
   code = '',
   options,
@@ -64,8 +71,7 @@ const CodeEditor = ({
     <div className="relative flex-1">
       <div className="absolute inset-0">
         <Editor
-          width="100%"
-          height="100%"
+          path={generateModelUri(modelId)}
           options={combinedOptions}
           language={language}
           value={code ?? undefined}
