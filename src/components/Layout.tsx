@@ -15,7 +15,6 @@ const Layout = ({ title, children }: Props) => {
   const [opened, setOpened] = useState(false);
   return (
     <AppShell
-      hidden
       styles={{
         main: {
           display: 'flex',
