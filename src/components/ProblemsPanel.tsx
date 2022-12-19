@@ -9,9 +9,10 @@ import { useState } from 'react';
 
 interface Props {
   errors: ErrorInstance[];
+  onClick: (error: ErrorInstance) => void;
 }
 
-const ProblemsPanel = ({ errors }: Props) => {
+const ProblemsPanel = ({ errors, onClick }: Props) => {
   const [opened, handlers] = useDisclosure(true);
   const [manuallyClosed, setManuallyClosed] = useState(false);
 
@@ -58,7 +59,11 @@ const ProblemsPanel = ({ errors }: Props) => {
           <Accordion.Panel>
             <Stack>
               {errors.map((error) => (
-                <ProblemDetail key={error.message} error={error} />
+                <ProblemDetail
+                  key={error.message}
+                  error={error}
+                  onClick={() => onClick(error)}
+                />
               ))}
             </Stack>
           </Accordion.Panel>

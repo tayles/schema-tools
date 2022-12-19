@@ -5,9 +5,10 @@ import PrettyPrintJson from './PrettyPrintJson';
 
 interface Props {
   error: ErrorInstance;
+  onClick: () => void;
 }
 
-const ProblemDetail = ({ error }: Props) => {
+const ProblemDetail = ({ error, onClick }: Props) => {
   return (
     <Alert
       key={error.message}
@@ -15,6 +16,7 @@ const ProblemDetail = ({ error }: Props) => {
       title={error.keyword}
       color="red"
       sx={{ userSelect: 'text' }}
+      onClick={onClick}
     >
       <div className="whitespace-pre-wrap">{error.message}</div>
       <PrettyPrintJson data={error} />

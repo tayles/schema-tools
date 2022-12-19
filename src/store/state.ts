@@ -1,10 +1,20 @@
+import {
+  type ICodeEditor,
+  type IMarker,
+  generateErrorFromMarker,
+  selectRegion,
+  type MonacoInstance,
+  loadMonacoInstance,
+} from '@/utils/monaco';
+import { type MutableRefObject, createRef } from 'react';
+
 import type { ErrorInstance } from '@/utils/model';
-import type { MutableRefObject } from 'react';
 import type { WorkerResult } from '@/workers/worker-thread';
 import create from 'zustand';
 import exampleDataJson from '../../public/examples/data.json';
 import exampleSchemaJson from '../../public/examples/schema.json';
 import { jsonToString } from '@/utils/json-to-string';
+import type { LineAndColumn } from '@/utils/json-parse-source-map';
 
 interface SchemaState {
   schemaVersion: string | null;
@@ -23,7 +33,10 @@ interface SchemaState {
   schemaErrors: ErrorInstance[];
   dataErrors: ErrorInstance[];
 
-  workerRef: MutableRefObject<Worker | undefined> | null;
+  workerRef: MutableRefObject<Worker>;
+  monacoRef: MutableRefObject<MonacoInstance>;
+  schemaEditorRef: MutableRefObject<ICodeEditor>;
+  dataEditorRef: MutableRefObject<ICodeEditor>;
 
   setRawSchema: (rawSchema: string) => void;
   setRawData: (rawData: string) => void;
@@ -31,12 +44,18 @@ interface SchemaState {
   setSchemaErrors: (errors: ErrorInstance[]) => void;
   setDataErrors: (errors: ErrorInstance[]) => void;
 
-  setWorkerRef: (workerRef: MutableRefObject<Worker | undefined>) => void;
-
   gotWorkerMessage: (result: WorkerResult) => void;
+
+  onSchemaMarkersValidation: (markers: IMarker[]) => void;
+  onDataMarkersValidation: (markers: IMarker[]) => void;
+
+  onSchemaProblemClick: (error: ErrorInstance) => void;
+  onDataProblemClick: (error: ErrorInstance) => void;
+
+  needsMonacoEditor: () => void;
 }
 
-export const useSchemaStore = create<SchemaState>((set) => ({
+export const useSchemaStore = create<SchemaState>((set, get) => ({
   schemaVersion: null,
 
   rawSchema: jsonToString(exampleSchemaJson),
@@ -53,7 +72,13 @@ export const useSchemaStore = create<SchemaState>((set) => ({
   schemaErrors: [],
   dataErrors: [],
 
-  workerRef: null,
+  workerRef: createRef<Worker>() as React.MutableRefObject<Worker>,
+  monacoRef:
+    createRef<MonacoInstance>() as React.MutableRefObject<MonacoInstance>,
+  schemaEditorRef:
+    createRef<ICodeEditor>() as React.MutableRefObject<ICodeEditor>,
+  dataEditorRef:
+    createRef<ICodeEditor>() as React.MutableRefObject<ICodeEditor>,
 
   setRawSchema: (rawSchema: string) => set(() => ({ rawSchema })),
   setRawData: (rawData: string) => set(() => ({ rawData })),
@@ -61,9 +86,6 @@ export const useSchemaStore = create<SchemaState>((set) => ({
   setSchemaErrors: (schemaErrors: ErrorInstance[]) =>
     set(() => ({ schemaErrors })),
   setDataErrors: (dataErrors: ErrorInstance[]) => set(() => ({ dataErrors })),
-
-  setWorkerRef: (workerRef: MutableRefObject<Worker | undefined>) =>
-    set(() => ({ workerRef })),
 
   gotWorkerMessage: (result: WorkerResult) =>
     set(() => {
@@ -99,4 +121,68 @@ export const useSchemaStore = create<SchemaState>((set) => ({
           return { rawData: result.data ?? '', dataErrors: result.errors };
       }
     }),
+
+  onSchemaMarkersValidation: (markers: IMarker[]) => {
+    const schemaErrors = markers.map((m) => generateErrorFromMarker(m));
+    set(() => ({ schemaErrors }));
+  },
+  onDataMarkersValidation: (markers: IMarker[]) => {
+    const dataErrors = markers.map((m) => generateErrorFromMarker(m));
+    set(() => ({ dataErrors }));
+  },
+
+  onSchemaProblemClick: (error: ErrorInstance) =>
+    set((state) =>
+      highlightEditorErrorInstance(
+        error,
+        state.monacoRef.current,
+        state.schemaEditorRef.current,
+      ),
+    ),
+  onDataProblemClick: (error: ErrorInstance) =>
+    set((state) =>
+      highlightEditorErrorInstance(
+        error,
+        state.monacoRef.current,
+        state.dataEditorRef.current,
+      ),
+    ),
+
+  needsMonacoEditor: async () => {
+    const monacoRef = get().monacoRef;
+    if (!monacoRef.current) {
+      // need to initialise monaco instance
+      const monacoInstance = await loadMonacoInstance();
+      console.log('Got monaco instance', monacoInstance);
+      monacoRef.current = monacoInstance;
+    }
+  },
 }));
+
+function highlightEditorErrorInstance(
+  error: ErrorInstance,
+  monaco?: MonacoInstance,
+  editor?: ICodeEditor,
+) {
+  if (!monaco || !editor) {
+    console.warn('No editor instance', monaco, editor);
+    return {};
+  }
+
+  if (error.markerLocation) {
+    const start: LineAndColumn = {
+      line: error.markerLocation.startLineNumber,
+      column: error.markerLocation.startColumn,
+    };
+    const end: LineAndColumn = {
+      line: error.markerLocation.endLineNumber,
+      column: error.markerLocation.endColumn,
+    };
+
+    selectRegion(start, end, editor, monaco);
+  } else if (error.pointer) {
+    // const pos = model.getPositionAt(error.pointer.value.pos);
+    // console.log(pos);
+  }
+  return {};
+}

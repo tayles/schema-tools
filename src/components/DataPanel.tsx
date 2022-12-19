@@ -22,7 +22,14 @@ const DataPanel = () => {
   const rawData = useSchemaStore((state) => state.rawData);
   const errors = useSchemaStore((state) => state.dataErrors);
   const workerRef = useSchemaStore((state) => state.workerRef);
+  const editorRef = useSchemaStore((state) => state.dataEditorRef);
   const setRawData = useSchemaStore((state) => state.setRawData);
+  const onDataMarkersValidation = useSchemaStore(
+    (state) => state.onDataMarkersValidation,
+  );
+  const onDataProblemClick = useSchemaStore(
+    (state) => state.onDataProblemClick,
+  );
 
   const [file, setFile] = useState<File>();
   const [language, setLanguage] = useState<SupportedLanguages>('json');
@@ -73,7 +80,7 @@ const DataPanel = () => {
   };
 
   function sendMessageToWorker(request: WorkerRequest) {
-    workerRef?.current?.postMessage(request);
+    workerRef.current?.postMessage(request);
   }
 
   return (
@@ -95,13 +102,15 @@ const DataPanel = () => {
 
         <Card.Section sx={{ flex: 1, display: 'flex' }}>
           <CodeEditor
+            editorRef={editorRef}
             language={language}
             code={rawData}
             onChange={setRawData}
+            onMarkersValidation={onDataMarkersValidation}
           />
         </Card.Section>
 
-        <ProblemsPanel errors={errors} />
+        <ProblemsPanel errors={errors} onClick={onDataProblemClick} />
       </div>
     </Panel>
   );

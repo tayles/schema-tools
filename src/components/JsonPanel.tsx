@@ -13,12 +13,19 @@ import { useSchemaStore } from '@/store/state';
 const JsonPanel = () => {
   const { colorScheme } = useMantineColorScheme();
   const rawData = useSchemaStore((state) => state.rawData);
-  const isParseable = useSchemaStore((state) => state.schemaParseable);
-  const isValid = useSchemaStore((state) => state.schemaValid);
-  const isFormatted = useSchemaStore((state) => state.schemaFormatted);
-  const errors = useSchemaStore((state) => state.schemaErrors);
+  const isParseable = useSchemaStore((state) => state.dataParseable);
+  const isValid = useSchemaStore((state) => state.dataValid);
+  const isFormatted = useSchemaStore((state) => state.dataFormatted);
+  const errors = useSchemaStore((state) => state.dataErrors);
   const workerRef = useSchemaStore((state) => state.workerRef);
+  const editorRef = useSchemaStore((state) => state.dataEditorRef);
   const setRawData = useSchemaStore((state) => state.setRawData);
+  const onDataMarkersValidation = useSchemaStore(
+    (state) => state.onDataMarkersValidation,
+  );
+  const onDataProblemClick = useSchemaStore(
+    (state) => state.onDataProblemClick,
+  );
 
   const language = 'json';
 
@@ -40,7 +47,7 @@ const JsonPanel = () => {
   };
 
   function sendMessageToWorker(request: WorkerRequest) {
-    workerRef?.current?.postMessage(request);
+    workerRef.current?.postMessage(request);
   }
 
   return (
@@ -51,19 +58,21 @@ const JsonPanel = () => {
           <ValidLabel valid={isParseable && isValid} />
           <div className="flex-1"></div>
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
-          <CopyButton thing="schema" text={rawData} />
+          <CopyButton thing="data" text={rawData} />
         </div>
 
         <Card.Section sx={{ flex: 1, display: 'flex' }}>
           <CodeEditor
+            editorRef={editorRef}
             language={language}
             code={rawData}
             onChange={setRawData}
+            onMarkersValidation={onDataMarkersValidation}
             theme={colorScheme === 'dark' ? 'vs-dark' : 'light'}
           />
         </Card.Section>
 
-        <ProblemsPanel errors={errors} />
+        <ProblemsPanel errors={errors} onClick={onDataProblemClick} />
       </div>
     </Panel>
   );

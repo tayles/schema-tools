@@ -1,9 +1,9 @@
-import type * as monaco from 'monaco-editor';
-
 import Editor from '@monaco-editor/react';
 import { type SupportedLanguages } from '@/utils/model';
+import type { MutableRefObject } from 'react';
+import type { ICodeEditor, IMarker, IOptions } from '@/utils/monaco';
 
-const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+const defaultOptions: IOptions = {
   minimap: {
     enabled: true,
   },
@@ -22,29 +22,42 @@ const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
 };
 
 interface Props {
+  editorRef: MutableRefObject<ICodeEditor>;
   language: SupportedLanguages;
   code: string;
-  options?: monaco.editor.IStandaloneEditorConstructionOptions;
+  options?: IOptions;
   theme?: string;
   onChange?: (value: string) => void;
+  onMarkersValidation?: (markers: IMarker[]) => void;
+  onMount?: (editor: ICodeEditor) => void;
 }
 
 const CodeEditor = ({
+  editorRef,
   language = 'json',
   code = '',
   options,
   theme = 'vs-light',
+  onMount,
   onChange,
+  onMarkersValidation,
 }: Props) => {
   const combinedOptions = {
     ...defaultOptions,
     options,
   };
 
+  function handleEditorDidMount(editor: ICodeEditor) {
+    editorRef.current = editor;
+    if (onMount) onMount(editor);
+  }
+
   function handleEditorChange(value: string | undefined) {
-    if (onChange) {
-      onChange(value ?? '');
-    }
+    if (onChange) onChange(value ?? '');
+  }
+
+  function handleEditorValidation(markers: IMarker[]) {
+    if (onMarkersValidation) onMarkersValidation(markers);
   }
 
   return (
@@ -57,7 +70,9 @@ const CodeEditor = ({
           language={language}
           value={code ?? undefined}
           theme={theme}
+          onMount={handleEditorDidMount}
           onChange={handleEditorChange}
+          onValidate={handleEditorValidation}
         />
       </div>
     </div>

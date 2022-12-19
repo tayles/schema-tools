@@ -71,6 +71,7 @@ export function generateError(keyword: string, err: Error): ErrorInstance {
     schemaPath: '',
     instancePath: '',
     params: {},
+    severity: 'error',
   };
 }
 

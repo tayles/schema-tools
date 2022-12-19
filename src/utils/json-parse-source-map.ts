@@ -2,9 +2,12 @@ import * as jsonSourceMap from 'json-source-map';
 
 export type PointerProp = 'value' | 'valueEnd' | 'key' | 'keyEnd';
 
-export interface Location {
+export interface LineAndColumn {
   line: number;
   column: number;
+}
+
+export interface Location extends LineAndColumn {
   pos: number;
 }
 

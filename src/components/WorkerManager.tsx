@@ -1,14 +1,10 @@
-import { useEffect, useRef } from 'react';
-
 import type { WorkerResult } from '@/workers/worker-thread';
+import { useEffect } from 'react';
 import { useSchemaStore } from '@/store/state';
 
 const WorkerManager = () => {
-  const setWorkerRef = useSchemaStore((state) => state.setWorkerRef);
+  const workerRef = useSchemaStore((state) => state.workerRef);
   const gotWorkerMessage = useSchemaStore((state) => state.gotWorkerMessage);
-
-  const workerRef = useRef<Worker>();
-  setWorkerRef(workerRef);
 
   // setup communication with worker thread
   useEffect(() => {

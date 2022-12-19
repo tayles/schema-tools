@@ -18,7 +18,14 @@ const YamlPanel = () => {
   const isFormatted = useSchemaStore((state) => state.schemaFormatted);
   const errors = useSchemaStore((state) => state.schemaErrors);
   const workerRef = useSchemaStore((state) => state.workerRef);
+  const editorRef = useSchemaStore((state) => state.schemaEditorRef);
   const setRawSchema = useSchemaStore((state) => state.setRawSchema);
+  const onSchemaMarkersValidation = useSchemaStore(
+    (state) => state.onSchemaMarkersValidation,
+  );
+  const onSchemaProblemClick = useSchemaStore(
+    (state) => state.onSchemaProblemClick,
+  );
 
   const language = 'yaml';
 
@@ -40,7 +47,7 @@ const YamlPanel = () => {
   };
 
   function sendMessageToWorker(request: WorkerRequest) {
-    workerRef?.current?.postMessage(request);
+    workerRef.current?.postMessage(request);
   }
 
   return (
@@ -56,14 +63,16 @@ const YamlPanel = () => {
 
         <Card.Section sx={{ flex: 1, display: 'flex' }}>
           <CodeEditor
+            editorRef={editorRef}
             language={language}
             code={rawSchema}
             onChange={setRawSchema}
+            onMarkersValidation={onSchemaMarkersValidation}
             theme={colorScheme === 'dark' ? 'vs-dark' : 'light'}
           />
         </Card.Section>
 
-        <ProblemsPanel errors={errors} />
+        <ProblemsPanel errors={errors} onClick={onSchemaProblemClick} />
       </div>
     </Panel>
   );
