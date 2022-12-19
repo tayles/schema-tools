@@ -33,7 +33,7 @@ const Layout = ({ title, children }: Props) => {
           onToggleNavbarOpen={() => setOpened((o) => !o)}
         />
       }
-      navbar={<NavBar opened={opened} />}
+      // navbar={<NavBar opened={opened} />}
       // aside={
       //   <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
       //     <Aside p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
