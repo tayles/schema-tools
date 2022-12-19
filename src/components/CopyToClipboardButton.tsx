@@ -20,6 +20,7 @@ const CopyToClipboardButton = ({ thing, text }: Props) => {
           <ActionIcon
             variant="outline"
             color={copied ? 'teal' : 'gray'}
+            aria-label="Copy to clipboard"
             onClick={copy}
             disabled={!text}
           >

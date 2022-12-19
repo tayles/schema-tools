@@ -28,6 +28,7 @@ const Layout = ({ title, children }: Props) => {
       asideOffsetBreakpoint="sm"
       header={
         <HeaderBar
+          title={title}
           opened={opened}
           onToggleNavbarOpen={() => setOpened((o) => !o)}
         />

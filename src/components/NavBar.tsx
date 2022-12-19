@@ -1,15 +1,17 @@
 import {
-  Anchor,
   Divider,
   Group,
   MediaQuery,
   NavLink,
   Navbar,
   ScrollArea,
+  Text,
 } from '@mantine/core';
 import {
   IconApiApp,
   IconBraces,
+  IconBrandTypescript,
+  IconCodePlus,
   IconHeart,
   IconIndentIncrease,
   IconTransform,
@@ -46,7 +48,7 @@ const navLinks: NavLinkDescriptor[] = [
     label: 'JSON Schema Format',
     description: 'Format and sort a schema',
     href: '/json-schema-format',
-    icon: <IconIndentIncrease />,
+    icon: <IconCodePlus />,
   },
   {
     label: 'API Format',
@@ -70,7 +72,7 @@ const navLinks: NavLinkDescriptor[] = [
     label: 'JSON Schema to Zod',
     description: 'Convert a json schema to zod TypeScript types',
     href: '/json-schema-to-zod',
-    icon: <IconTransform />,
+    icon: <IconBrandTypescript />,
   },
 ];
 
@@ -80,42 +82,42 @@ const NavBar = ({ opened = false }: Props) => {
   return (
     <Navbar p="md" hiddenBreakpoint="xl" hidden={!opened} width={{ sm: 300 }}>
       <Navbar.Section>
-        <p>Tools for APIs, JSON Schema and more</p>
+        <p className="select-text text-sm">
+          Tools for APIs, JSON Schema and more
+        </p>
         <Divider my="sm" />
       </Navbar.Section>
-      <Navbar.Section grow mt="md">
-        <ScrollArea>
-          {navLinks.map((l) => (
-            <NavLink
-              component={Link}
-              color="violet"
-              key={l.label}
-              label={l.label}
-              description={l.description}
-              href={l.href}
-              icon={l.icon}
-              active={pathname === l.href}
-            />
-          ))}
-        </ScrollArea>
+      <Navbar.Section grow component={ScrollArea} mx="-xs" px="xs">
+        {navLinks.map((l) => (
+          <NavLink
+            component={Link}
+            color="teal"
+            key={l.label}
+            label={l.label}
+            description={l.description}
+            href={l.href}
+            icon={l.icon}
+            active={pathname === l.href}
+          />
+        ))}
       </Navbar.Section>
       <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
         <Navbar.Section>
           <Divider my="sm" />
-          <Group spacing="xs">
-            <span>Made with</span>
-            <IconHeart color="red" />
-            <span>by</span>
-            <Anchor
-              component={Link}
-              variant="gradient"
-              href="https://cwf.tayles.co.uk"
-              gradient={{ from: '#ffe460', to: '#ff7519', deg: 90 }}
-              fw={700}
-            >
-              Clockwork Fish
-            </Anchor>
-          </Group>
+          <Link href="https://cwf.tayles.co.uk" className="select-text">
+            <Group className="gap-1">
+              <span>Made with</span>
+              <IconHeart color="red" aria-label="love" />
+              <span>by</span>
+              <Text
+                variant="gradient"
+                gradient={{ from: '#ffe460', to: '#ff7519', deg: 90 }}
+                fw={700}
+              >
+                Clockwork Fish
+              </Text>
+            </Group>
+          </Link>
         </Navbar.Section>
       </MediaQuery>
     </Navbar>

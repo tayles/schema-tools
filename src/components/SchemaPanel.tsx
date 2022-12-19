@@ -4,12 +4,17 @@ import { useEffect, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import FileUploadInput from './FileUploadInput';
 import Panel from './Panel';
-import { type SupportedLanguages } from '@/utils/model';
+import { getOtherLanguage, type SupportedLanguages } from '@/utils/model';
 import { useSchemaStore } from '@/store/state';
 import ValidLabel from './ValidLabel';
 import CopyButton from './CopyToClipboardButton';
 import type { WorkerRequest } from '@/workers/worker-thread';
-import { Card, SegmentedControl, useMantineColorScheme } from '@mantine/core';
+import {
+  Card,
+  SegmentedControl,
+  Tooltip,
+  useMantineColorScheme,
+} from '@mantine/core';
 import FormatButton from './FormatButton';
 import { IconDice5 } from '@tabler/icons';
 import IconButton from './IconButton';
@@ -93,16 +98,17 @@ const SchemaPanel = () => {
           <h2>Schema</h2>
           <ValidLabel valid={isParseable && isValid} />
           <div className="flex-1"></div>
-          <SegmentedControl
-            size="xs"
-            data={[
-              { label: 'Json', value: 'json' },
-              { label: 'Yaml', value: 'yaml' },
-            ]}
-            onChange={(language: string) =>
-              handleConvert(language as SupportedLanguages)
-            }
-          />
+          <Tooltip label="Convert" withArrow position="top">
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: 'Json', value: 'json' },
+                { label: 'Yaml', value: 'yaml' },
+              ]}
+              value={language}
+              onChange={() => handleConvert(getOtherLanguage(language))}
+            />
+          </Tooltip>
           <FormatButton onClick={handleFormat} disabled={isFormatted} />
           <IconButton
             tooltip="Generate data"

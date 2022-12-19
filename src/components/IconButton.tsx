@@ -8,7 +8,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const IconButton = ({ tooltip, icon, ...rest }: Props) => {
   return (
     <Tooltip label={tooltip} withArrow position="top">
-      <ActionIcon variant="outline" {...rest}>
+      <ActionIcon variant="outline" {...rest} aria-label={tooltip}>
         {icon}
       </ActionIcon>
     </Tooltip>

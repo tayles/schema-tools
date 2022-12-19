@@ -7,15 +7,19 @@ import {
   Title,
   useMantineTheme,
 } from '@mantine/core';
+import { IconBrandGithub, IconInfoCircle, IconShare } from '@tabler/icons';
 
+import HeaderButton from './HeaderButton';
+import Link from 'next/link';
 import ThemeToggle from './ThemeToggle';
 
 interface Props {
+  title: string;
   opened: boolean;
   onToggleNavbarOpen: () => void;
 }
 
-const HeaderBar = ({ opened = false, onToggleNavbarOpen }: Props) => {
+const HeaderBar = ({ title, opened = false, onToggleNavbarOpen }: Props) => {
   const theme = useMantineTheme();
 
   return (
@@ -29,12 +33,12 @@ const HeaderBar = ({ opened = false, onToggleNavbarOpen }: Props) => {
           mr="xl"
         />
 
-        <div className="flex flex-1 items-center justify-between gap-8">
+        <div className="flex flex-1 items-center justify-between gap-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 -32 576 576"
-            width={50}
-            height={50}
+            width={40}
+            height={40}
           >
             <path
               fill="#00A35B"
@@ -42,14 +46,39 @@ const HeaderBar = ({ opened = false, onToggleNavbarOpen }: Props) => {
             />
           </svg>
 
-          <Title order={1} className="flex-1">
-            Schema Tools
-          </Title>
+          <Link href="/">
+            <Title order={1}>Schema Tools</Title>
+          </Link>
+
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <Title order={2}>{title}</Title>
+          </MediaQuery>
+
+          <div className="flex-1" />
+
+          <MediaQuery smallerThan="lg" styles={{ display: 'none' }}>
+            <Group>
+              <HeaderButton
+                href="#"
+                icon={<IconShare size={16} />}
+                label="Share Link"
+              />
+              <HeaderButton
+                href="/about"
+                icon={<IconInfoCircle />}
+                label="About"
+              />
+            </Group>
+          </MediaQuery>
 
           <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
             <Group>
-              <Button>About</Button>
-              <Button>Source</Button>
+              <HeaderButton
+                href="https://github.com/tayles/schema-tools"
+                icon={<IconBrandGithub />}
+                label="View Source"
+              />
+
               <ThemeToggle />
             </Group>
           </MediaQuery>
