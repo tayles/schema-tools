@@ -27,6 +27,7 @@ const HeaderBar = ({ title, opened = false, onToggleNavbarOpen }: Props) => {
       <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
         <Burger
           opened={opened}
+          aria-label="Open navigation"
           onClick={onToggleNavbarOpen}
           size="sm"
           color={theme.colors.gray[6]}
@@ -47,11 +48,15 @@ const HeaderBar = ({ title, opened = false, onToggleNavbarOpen }: Props) => {
           </svg>
 
           <Link href="/">
-            <Title order={1}>Schema Tools</Title>
+            <Title order={1} className="select-text">
+              Schema Tools
+            </Title>
           </Link>
 
           <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-            <Title order={2}>{title}</Title>
+            <Title order={2} className="select-text">
+              {title}
+            </Title>
           </MediaQuery>
 
           <div className="flex-1" />
