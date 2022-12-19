@@ -1,7 +1,6 @@
 import { type NextPage } from 'next';
 import Layout from '@/components/Layout';
-import { Anchor, Card, Center, Table } from '@mantine/core';
-import Link from 'next/link';
+import { Anchor, Card, Space, Table } from '@mantine/core';
 
 interface Dependency {
   name: string;
@@ -88,12 +87,13 @@ const AboutPage: NextPage = () => {
 
   return (
     <Layout title="About">
-      <Card shadow="sm" p="lg" radius="md" withBorder>
+      <Card shadow="sm" p="lg" radius="md" withBorder className="select-text">
         <p>
           This site is made possible by these awesome libraries, frameworks,
           technologies and services:
         </p>
-        <Table highlightOnHover>
+        <Space h="lg" />
+        <Table>
           <thead>
             <tr>
               <th>Dependency</th>
