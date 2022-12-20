@@ -14,7 +14,11 @@ import type { WorkerResult } from '@/workers/worker-thread';
 import create from 'zustand';
 import exampleDataJson from '../../public/examples/data.json';
 import exampleSchemaJson from '../../public/examples/schema.json';
-import { JSONSchema, jsonToString, stringToJson } from '@/utils/json-to-string';
+import {
+  type JSONSchema,
+  jsonToString,
+  stringToJson,
+} from '@/utils/json-to-string';
 import type { LineAndColumn } from '@/utils/json-parse-source-map';
 
 interface SchemaState {
@@ -41,9 +45,6 @@ interface SchemaState {
 
   setRawSchema: (rawSchema: string) => void;
   setRawData: (rawData: string) => void;
-
-  setSchemaErrors: (errors: ErrorInstance[]) => void;
-  setDataErrors: (errors: ErrorInstance[]) => void;
 
   gotWorkerMessage: (result: WorkerResult) => void;
 
@@ -90,17 +91,13 @@ export const useSchemaStore = create<SchemaState>((set, get) => ({
     }),
   setRawData: (rawData: string) => set(() => ({ rawData })),
 
-  setSchemaErrors: (schemaErrors: ErrorInstance[]) =>
-    set(() => ({ schemaErrors })),
-  setDataErrors: (dataErrors: ErrorInstance[]) => set(() => ({ dataErrors })),
-
   gotWorkerMessage: (result: WorkerResult) =>
     set(() => {
       switch (result.command) {
         case 'parse-result':
           return result.thing === 'schema'
-            ? { schemaErrors: result.errors, schemaParseable: result.valid }
-            : { dataErrors: result.errors, dataParseable: result.valid };
+            ? { schemaParseable: result.valid }
+            : { dataParseable: result.valid };
           break;
         case 'validation-result':
           return result.thing === 'schema'
@@ -176,22 +173,30 @@ function highlightEditorErrorInstance(
     return {};
   }
 
+  let start: LineAndColumn | null = null;
+  let end: LineAndColumn | null = null;
+
   if (error.markerLocation) {
-    const start: LineAndColumn = {
+    start = {
       line: error.markerLocation.startLineNumber - 1,
       column: error.markerLocation.startColumn - 1,
     };
-    const end: LineAndColumn = {
+    end = {
       line: error.markerLocation.endLineNumber - 1,
       column: error.markerLocation.endColumn - 1,
     };
-
-    selectRegion(start, end, editor, monaco);
   } else if (error.pointer?.value) {
-    selectRegion(error.pointer.value, error.pointer.valueEnd, editor, monaco);
+    start = error.pointer.value;
+    end = error.pointer.valueEnd;
     // const pos = model.getPositionAt(error.pointer.value.pos);
   } else if (error.pointer?.key) {
-    selectRegion(error.pointer.key, error.pointer.keyEnd, editor, monaco);
+    start = error.pointer.key;
+    end = error.pointer.keyEnd;
   }
+
+  if (start && end) {
+    selectRegion(start, end, editor, monaco);
+  }
+
   return {};
 }
