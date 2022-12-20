@@ -10,7 +10,7 @@ import {
   generateError,
   validateJsonSchema,
   validateDataAgainstJsonSchema,
-  decorateErrors,
+  decorateValidationErrors,
   createAjvInstance,
 } from '@/utils/jsonschema-validate';
 import { formatJson, formatYaml } from '@/utils/prettier-format';
@@ -168,7 +168,10 @@ function validateSchema(schema: JSONValue) {
     if (validationResult.ok) {
       validateFn = validationResult.validateFn;
     } else {
-      errors = decorateErrors(validationResult.errors, store.schema.pointers);
+      errors = decorateValidationErrors(
+        validationResult.errors,
+        store.schema.pointers,
+      );
       validateFn = null;
     }
   } catch (err) {
@@ -189,7 +192,10 @@ function validateData(data: JSONValue) {
       const validationResult = validateDataAgainstJsonSchema(data, validateFn);
       valid = validationResult.ok;
       if (!validationResult.ok) {
-        errors = decorateErrors(validationResult.errors, store.data.pointers);
+        errors = decorateValidationErrors(
+          validationResult.errors,
+          store.data.pointers,
+        );
       }
     } catch (err) {
       errors = [generateError('validate-data', err as Error)];

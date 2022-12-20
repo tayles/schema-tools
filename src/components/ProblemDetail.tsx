@@ -22,9 +22,13 @@ const ProblemDetail = ({ error, onClick }: Props) => {
       onClick={onClick}
     >
       <div className="whitespace-pre-wrap">{error.message}</div>
+
       {/* <PrettyPrintJson data={error} /> */}
-      {error.pointer && <IconEye size={16} />}
-      {error.markerLocation && <IconLink size={16} />}
+      {error.start && (
+        <div className="text-xs text-gray-400">
+          Line {error.start.line} Column {error.start.column}
+        </div>
+      )}
     </Alert>
   );
 };

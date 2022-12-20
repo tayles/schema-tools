@@ -173,29 +173,8 @@ function highlightEditorErrorInstance(
     return {};
   }
 
-  let start: LineAndColumn | null = null;
-  let end: LineAndColumn | null = null;
-
-  if (error.markerLocation) {
-    start = {
-      line: error.markerLocation.startLineNumber - 1,
-      column: error.markerLocation.startColumn - 1,
-    };
-    end = {
-      line: error.markerLocation.endLineNumber - 1,
-      column: error.markerLocation.endColumn - 1,
-    };
-  } else if (error.pointer?.value) {
-    start = error.pointer.value;
-    end = error.pointer.valueEnd;
-    // const pos = model.getPositionAt(error.pointer.value.pos);
-  } else if (error.pointer?.key) {
-    start = error.pointer.key;
-    end = error.pointer.keyEnd;
-  }
-
-  if (start && end) {
-    selectRegion(start, end, editor, monaco);
+  if (error.start && error.end) {
+    selectRegion(error.start, error.end, editor, monaco);
   }
 
   return {};

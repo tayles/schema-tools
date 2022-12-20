@@ -21,13 +21,20 @@ export interface MarkerLocation {
 export function generateErrorFromMarker(marker: IMarker): ErrorInstance {
   const { startLineNumber, startColumn, endLineNumber, endColumn } = marker;
   return {
-    keyword: (marker.code as string) ?? 'marker',
+    keyword: '',
     message: marker.message,
     schemaPath: '',
     instancePath: '',
     params: {},
     severity: markerSeverityMap[marker.severity],
-    markerLocation: { startLineNumber, startColumn, endLineNumber, endColumn },
+    start: {
+      line: startLineNumber,
+      column: startColumn,
+    },
+    end: {
+      line: endLineNumber,
+      column: endColumn,
+    },
   };
 }
 
@@ -45,14 +52,9 @@ export function selectRegion(
   monaco: MonacoInstance,
 ): boolean {
   editor.setSelection(
-    new monaco.Selection(
-      start.line + 1,
-      start.column + 1,
-      end.line + 1,
-      end.column + 1,
-    ),
+    new monaco.Selection(start.line, start.column, end.line, end.column),
   );
-  editor.revealLineInCenter(start.line + 1, 0);
+  editor.revealLineInCenter(start.line, 0);
   editor.focus();
   return true;
 }

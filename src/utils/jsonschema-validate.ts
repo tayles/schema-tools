@@ -1,8 +1,8 @@
+import type { ErrorInstance, Severity, ValidationErrorInstance } from './model';
 import type { JSONSchema, JSONValue } from './json-to-string';
 import type { SchemaObject, ValidateFunction } from 'ajv';
 
 import Ajv from 'ajv';
-import type { ErrorInstance } from './model';
 import type { Pointers } from './json-parse-source-map';
 import addFormats from 'ajv-formats';
 
@@ -14,7 +14,7 @@ interface JsonSchemaValidationSuccess {
 
 interface JsonSchemaValidationFailure {
   ok: false;
-  errors: ErrorInstance[];
+  errors: ValidationErrorInstance[];
 }
 
 type JsonSchemaValidationResult =
@@ -64,25 +64,47 @@ export function validateDataAgainstJsonSchema(
   }
 }
 
-export function generateError(keyword: string, err: Error): ErrorInstance {
+export function generateError(
+  keyword: string,
+  err: Error,
+  severity: Severity = 'error',
+): ErrorInstance {
   return {
     keyword,
     message: err.message,
     schemaPath: '',
     instancePath: '',
     params: {},
-    severity: 'error',
+    severity,
   };
 }
 
-export function decorateErrors(
-  errors: ErrorInstance[],
+export function decorateValidationErrors(
+  errors: ValidationErrorInstance[],
   pointers: Pointers | null,
 ): ErrorInstance[] {
-  return errors.map((error) => ({
-    ...error,
-    pointer: pointers?.[error.instancePath ?? '/'],
-  }));
+  return errors.map((error) => {
+    const pointer = pointers?.[error.instancePath ?? '/'];
+    const start = pointer?.value || pointer?.key;
+    const end = pointer?.valueEnd || pointer?.keyEnd;
+
+    // map to zero based offsets
+    if (start) {
+      start.line--;
+      start.column--;
+    }
+    if (end) {
+      end.line--;
+      end.column--;
+    }
+
+    return {
+      ...error,
+      severity: 'error',
+      start,
+      end,
+    };
+  });
 }
 
 export function createAjvInstance(): Ajv {
