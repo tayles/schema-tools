@@ -84,23 +84,25 @@ export function decorateValidationErrors(
   pointers: Pointers | null,
 ): ErrorInstance[] {
   return errors.map((error) => {
+    const isStrict = error.keyword === 'strict-mode';
     const pointer = pointers?.[error.instancePath ?? '/'];
     const start = pointer?.value || pointer?.key;
     const end = pointer?.valueEnd || pointer?.keyEnd;
 
-    // map to zero based offsets
+    // map to 1-based offsets used by monaco
     if (start) {
-      start.line--;
-      start.column--;
+      start.line++;
+      start.column++;
     }
     if (end) {
-      end.line--;
-      end.column--;
+      end.line++;
+      end.column++;
     }
 
     return {
       ...error,
-      severity: 'error',
+      keyword: isStrict ? '' : error.keyword,
+      severity: isStrict ? 'warn' : 'error',
       start,
       end,
     };
