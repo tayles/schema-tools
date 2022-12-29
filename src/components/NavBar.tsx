@@ -12,7 +12,6 @@ import {
   IconBraces,
   IconBrandTypescript,
   IconCodePlus,
-  IconHeart,
   IconIndentIncrease,
   IconTransform,
 } from '@tabler/icons';
@@ -106,9 +105,7 @@ const NavBar = ({ opened = false }: Props) => {
           <Divider my="sm" />
           <Link href="https://cwf.tayles.co.uk" className="select-text">
             <Group className="gap-1">
-              <span>Made with</span>
-              <IconHeart color="red" aria-label="love" />
-              <span>by</span>
+              <span>A</span>
               <Text
                 variant="gradient"
                 gradient={{ from: '#ffe460', to: '#ff7519', deg: 90 }}
@@ -116,6 +113,7 @@ const NavBar = ({ opened = false }: Props) => {
               >
                 Clockwork Fish
               </Text>
+              <span>production</span>
             </Group>
           </Link>
         </Navbar.Section>
