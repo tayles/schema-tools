@@ -35,7 +35,11 @@ const dependencies: Dependency[] = [
     url: 'https://mantine.dev',
     notes: 'UI component library',
   },
-  { name: '@tabler/icons', url: 'https://tabler-icons.io', notes: 'Icons' },
+  {
+    name: '@tabler/icons',
+    url: 'https://tabler-icons.io',
+    notes: 'Icon collection',
+  },
   { name: 'tRPC', url: 'https://trpc.io', notes: 'Typesafe APIs' },
   {
     name: 'json-schema-faker',
@@ -45,7 +49,7 @@ const dependencies: Dependency[] = [
   {
     name: 'json-source-map',
     url: 'https://www.npmjs.com/package/json-source-map',
-    notes: '',
+    notes: 'Calculate JSON pointers for a document',
   },
   {
     name: 'to-json-schema',
