@@ -10,7 +10,7 @@ import {
 
 const defaultOptions: IOptions = {
   minimap: {
-    enabled: true,
+    enabled: false,
   },
   links: true,
   automaticLayout: true,
