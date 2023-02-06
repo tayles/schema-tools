@@ -1,5 +1,5 @@
 import IconButton from './IconButton';
-import { IconIndentIncrease } from '@tabler/icons';
+import { IconIndentIncrease } from '@tabler/icons-react';
 
 const FormatButton = (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (

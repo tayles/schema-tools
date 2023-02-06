@@ -1,8 +1,6 @@
-import { IconAlertCircle, IconEye, IconLink } from '@tabler/icons';
-
 import { Alert } from '@mantine/core';
 import type { ErrorInstance } from '@/utils/model';
-import PrettyPrintJson from './PrettyPrintJson';
+import { IconAlertCircle } from '@tabler/icons-react';
 
 interface Props {
   error: ErrorInstance;

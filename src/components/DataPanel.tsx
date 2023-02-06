@@ -11,7 +11,7 @@ import CopyButton from './CopyToClipboardButton';
 import type { WorkerRequest } from '@/workers/worker-thread';
 import FormatButton from './FormatButton';
 import IconButton from './IconButton';
-import { IconMathSymbols } from '@tabler/icons';
+import { IconMathSymbols } from '@tabler/icons-react';
 import ProblemsPanel from './ProblemsPanel';
 import { Card } from '@mantine/core';
 

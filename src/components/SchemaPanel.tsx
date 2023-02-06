@@ -16,7 +16,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import FormatButton from './FormatButton';
-import { IconDice5 } from '@tabler/icons';
+import { IconDice5 } from '@tabler/icons-react';
 import IconButton from './IconButton';
 import ProblemsPanel from './ProblemsPanel';
 

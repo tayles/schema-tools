@@ -1,6 +1,6 @@
 import { FileButton } from '@mantine/core';
 import IconButton from './IconButton';
-import { IconUpload } from '@tabler/icons';
+import { IconUpload } from '@tabler/icons-react';
 
 interface Props {
   onFileLoad: (file?: File) => void;

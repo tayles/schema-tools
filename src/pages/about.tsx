@@ -36,7 +36,7 @@ const dependencies: Dependency[] = [
     notes: 'UI component library',
   },
   {
-    name: '@tabler/icons',
+    name: '@tabler/icons-react',
     url: 'https://tabler-icons.io',
     notes: 'Icon collection',
   },

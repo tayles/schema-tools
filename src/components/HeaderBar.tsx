@@ -6,7 +6,11 @@ import {
   Title,
   useMantineTheme,
 } from '@mantine/core';
-import { IconBrandGithub, IconInfoCircle, IconShare } from '@tabler/icons';
+import {
+  IconBrandGithub,
+  IconInfoCircle,
+  IconShare,
+} from '@tabler/icons-react';
 
 import HeaderButton from './HeaderButton';
 import Link from 'next/link';

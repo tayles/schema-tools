@@ -1,4 +1,4 @@
-import { IconCheck, IconX } from '@tabler/icons';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 import { Badge } from '@mantine/core';
 

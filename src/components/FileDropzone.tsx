@@ -1,5 +1,5 @@
 import { Center, Group, Text, useMantineTheme } from '@mantine/core';
-import { IconCodePlus, IconUpload, IconX } from '@tabler/icons';
+import { IconCodePlus, IconUpload, IconX } from '@tabler/icons-react';
 
 import { Dropzone } from '@mantine/dropzone';
 import { useSchemaStore } from '@/store/state';

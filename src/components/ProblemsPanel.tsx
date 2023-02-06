@@ -1,7 +1,7 @@
 import { Accordion, Card, Group, Stack } from '@mantine/core';
 
 import type { ErrorInstance } from '@/utils/model';
-import { IconChevronUp } from '@tabler/icons';
+import { IconChevronUp } from '@tabler/icons-react';
 import ProblemCountBadge from './ProblemCountBadge';
 import ProblemDetail from './ProblemDetail';
 import { useDisclosure } from '@mantine/hooks';

@@ -1,4 +1,4 @@
-import { IconMoonStars, IconSun } from '@tabler/icons';
+import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import { Switch, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 
 export function ThemeToggle() {
