@@ -11,7 +11,7 @@ import { type MutableRefObject, createRef } from 'react';
 
 import type { ErrorInstance } from '@/utils/model';
 import type { WorkerResult } from '@/workers/worker-thread';
-import create from 'zustand';
+import { create } from 'zustand';
 import exampleDataJson from '../../public/examples/data.json';
 import exampleSchemaJson from '../../public/examples/schema.json';
 import {
@@ -19,7 +19,6 @@ import {
   jsonToString,
   stringToJson,
 } from '@/utils/json-to-string';
-import type { LineAndColumn } from '@/utils/json-parse-source-map';
 
 interface SchemaState {
   schemaVersion: string | null;
