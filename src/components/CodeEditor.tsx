@@ -19,7 +19,7 @@ const defaultOptions: IOptions = {
   contextmenu: false,
   cursorBlinking: 'blink',
   copyWithSyntaxHighlighting: false,
-  renderFinalNewline: true,
+  renderFinalNewline: 'on',
   renderLineHighlight: 'none',
   snippetSuggestions: 'none',
   wordWrap: 'on',
